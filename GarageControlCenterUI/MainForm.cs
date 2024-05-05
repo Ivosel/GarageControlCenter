@@ -66,31 +66,24 @@ namespace GarageControlCenterUI
                 levelButtons.Add(new LevelButton(level));
             }
 
+            overviewControls = new List<Button>();
+
+            // Create overview buttons and add them to the list of button controls
+            TotalButton totalButton = new TotalButton(myGarage);
+            BarrierButton entrance = new BarrierButton("entrance");
+            BarrierButton exit = new BarrierButton("exit");
+            PaymentMachineButton paymentMachine = new PaymentMachineButton(this);
+
+            overviewControls.Add(totalButton);
+            overviewControls.Add(entrance);
+            overviewControls.Add(exit);
+            overviewControls.Add(paymentMachine);
+
             PopulateLevelButtons(); // Populate the level buttons on the main form
             OverviewButton_Click(this, EventArgs.Empty); // Show the overview (HOME) on the main form
         }
 
-        private void HandleCustomerExit(object? sender, ExitDemonstration.CustomerExitEventArgs e)
-        {
-            var levelButton = levelButtons.FirstOrDefault(b => b.Level.LevelNumber == int.Parse(e.ChosenSpot.Placement[0].ToString()));
-            var levelGrid = levelGrids.FirstOrDefault(g => g.selectedLevel.LevelNumber == int.Parse(e.ChosenSpot.Placement[0].ToString()));
-            TotalButton total = overviewControls.OfType<TotalButton>().FirstOrDefault();
 
-            total.RefreshLabels();
-            levelButton.RefreshLabels();
-            levelGrid.RefreshGrid(e.ChosenSpot);
-        }
-
-        private void HandleCustomerEntry(object? sender, EntryDemonstration.CustomerEntryEventArgs e)
-        {
-            var levelButton = levelButtons.FirstOrDefault(b => b.Level.LevelNumber == int.Parse(e.ChosenSpot.Placement[0].ToString()));
-            var levelGrid = levelGrids.FirstOrDefault(g => g.selectedLevel.LevelNumber == int.Parse(e.ChosenSpot.Placement[0].ToString()));
-            TotalButton total = overviewControls.OfType<TotalButton>().FirstOrDefault();
-
-            total.RefreshLabels();
-            levelButton.RefreshLabels();
-            levelGrid.RefreshGrid(e.ChosenSpot);
-        }
 
         // Method to prompt the user to choose the number of levels for the garage
         private int ChooseNumberOfLevelsDialog()
@@ -105,18 +98,6 @@ namespace GarageControlCenterUI
         private void EnterSpotsForm_CreateGarageRequested(object sender, List<int> spotsPerLevelList)
         {
             myGarage = new Garage(spotsPerLevelList); // Create a new garage instance
-
-            overviewControls = new List<Button>();
-
-            // Create overview buttons and add them to the list of button controls
-            TotalButton totalButton = new TotalButton(myGarage);
-            overviewControls.Add(totalButton);
-            BarrierButton entrance = new BarrierButton("entrance");
-            overviewControls.Add(entrance);
-            BarrierButton exit = new BarrierButton("exit");
-            overviewControls.Add(exit);
-            PaymentMachineButton paymentMachine = new PaymentMachineButton(this);
-            overviewControls.Add(paymentMachine);
         }
 
         // Populate the level buttons on the main form
@@ -146,6 +127,16 @@ namespace GarageControlCenterUI
                 levelButton.Height = levelListLayout.Width - 10;
                 levelListLayout.Controls.Add(levelButton);
             }
+        }
+        private void UpdateUI(ParkingSpot chosenSpot)
+        {
+            var levelButton = levelButtons.FirstOrDefault(b => b.Level.LevelNumber == int.Parse(chosenSpot.Placement[0].ToString()));
+            var levelGrid = levelGrids.FirstOrDefault(g => g.selectedLevel.LevelNumber == int.Parse(chosenSpot.Placement[0].ToString()));
+            TotalButton total = overviewControls.OfType<TotalButton>().FirstOrDefault();
+
+            total.RefreshLabels();
+            levelButton.RefreshLabels();
+            levelGrid.RefreshGrid(chosenSpot);
         }
 
         // Event handler for overview button click
@@ -180,7 +171,6 @@ namespace GarageControlCenterUI
         private void entranceDemoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the entry demonstration form
-            entryDemo.TopMost = true;
             entryDemo.Show();
         }
 
@@ -188,7 +178,6 @@ namespace GarageControlCenterUI
         private void exitDemoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show the exit demonstration form
-            exitDemo.TopMost = true;
             exitDemo.Show();
         }
 
@@ -196,6 +185,15 @@ namespace GarageControlCenterUI
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ticketsForm.Show();
+        }
+        private void HandleCustomerExit(object? sender, ExitDemonstration.CustomerExitEventArgs e)
+        {
+            UpdateUI(e.ChosenSpot);
+        }
+
+        private void HandleCustomerEntry(object? sender, EntryDemonstration.CustomerEntryEventArgs e)
+        {
+            UpdateUI(e.ChosenSpot);
         }
     }
 }

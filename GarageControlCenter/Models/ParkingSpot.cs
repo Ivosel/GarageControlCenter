@@ -17,7 +17,7 @@
             IsOccupied = false;
         }
 
-        // Constructor to initialize the spot with location
+        // Constructor to initialize the spot with its position in the garage
         public ParkingSpot(int level, int spotNumber)
         {
             Placement = $"{level}-{spotNumber}";

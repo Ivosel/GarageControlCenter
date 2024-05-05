@@ -53,7 +53,7 @@ namespace GarageControlCenterUI
             InsertTicketButton.TabIndex = 1;
             InsertTicketButton.Text = "Insert Ticket";
             InsertTicketButton.UseVisualStyleBackColor = true;
-            InsertTicketButton.Click += this.InsertTicketButton_Click;
+            InsertTicketButton.Click += InsertTicketButton_Click;
             // 
             // EntryDemonstration
             // 
@@ -64,6 +64,8 @@ namespace GarageControlCenterUI
             Controls.Add(TakeTicketButton);
             Name = "EntryDemonstration";
             Text = "Demonstration";
+            TopMost = true;
+            FormClosing += EntryDemonstration_FormClosing;
             ResumeLayout(false);
         }
 

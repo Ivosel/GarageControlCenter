@@ -79,6 +79,7 @@
             Controls.Add(ticketGrid);
             Name = "TicketsForm";
             Text = "Tickets";
+            TopMost = true;
             FormClosing += TicketsForm_FormClosing;
             ((System.ComponentModel.ISupportInitialize)garageBindingSource).EndInit();
             ((System.ComponentModel.ISupportInitialize)ticketGrid).EndInit();

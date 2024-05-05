@@ -73,6 +73,8 @@ namespace GarageControlCenterUI
             Controls.Add(InsertTicketButton);
             Name = "ExitDemonstration";
             Text = "Demonstration";
+            TopMost = true;
+            FormClosing += ExitDemonstration_FormClosing;
             ResumeLayout(false);
             PerformLayout();
         }
