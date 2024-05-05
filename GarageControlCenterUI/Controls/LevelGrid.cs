@@ -72,7 +72,7 @@ namespace GarageControlCenterUI.Controls
 
                         int yCoordinate = i * (button.Height + 30);
 
-                        if (i % 2 == 0)
+                        if (((i+1)% 2 == 0) && i != 0)
                         {
                             yCoordinate += 30;
                         }
