@@ -9,7 +9,7 @@
         public EntranceBarrier Entrance {  get; set; }
         public ExitBarrier Exit { get; set; }
         public int TotalCapacity { get; set; }
-        public List<Customer> Customers { get; set; }
+        public List<User> Users { get; set; }
         public List<Ticket> Tickets { get; set; }
 
 
@@ -19,7 +19,7 @@
             Entrance = new EntranceBarrier();
             Exit = new ExitBarrier();
             Tickets = new List<Ticket>();
-            Customers = new List<Customer>();
+            Users = new List<User>();
             Levels = new List<Level>();
 
             // Create levels and parking spots on each level according to the list recieved

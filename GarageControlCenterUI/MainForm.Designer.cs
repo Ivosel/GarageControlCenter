@@ -57,6 +57,7 @@
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(61, 25);
             fileToolStripMenuItem.Text = "&Users";
+            fileToolStripMenuItem.Click += fileToolStripMenuItem_Click;
             // 
             // editToolStripMenuItem
             // 

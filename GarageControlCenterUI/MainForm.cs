@@ -9,12 +9,13 @@ namespace GarageControlCenterUI
     public partial class MainForm : Form
     {
         public Garage myGarage;
-        public TicketsForm ticketsForm;
-        public List<LevelGrid> levelGrids;
+        private List<LevelGrid> levelGrids;
         private List<Button> overviewControls;
-        public List<LevelButton> levelButtons;
+        private List<LevelButton> levelButtons;
+        public TicketsForm ticketsForm;
         private EntryDemonstration entryDemo;
         private ExitDemonstration exitDemo;
+        private UsersForm usersForm;
 
         public MainForm()
         {
@@ -50,6 +51,9 @@ namespace GarageControlCenterUI
             // Initialize the tickets form
             ticketsForm = new TicketsForm(myGarage.Tickets);
             ticketsForm.RefreshTickets();
+            usersForm = new UsersForm(myGarage.Users);
+            usersForm.RefreshUsers();
+
 
             entryDemo = new EntryDemonstration(this);
             exitDemo = new ExitDemonstration(this);
@@ -194,6 +198,11 @@ namespace GarageControlCenterUI
         private void HandleCustomerEntry(object? sender, EntryDemonstration.CustomerEntryEventArgs e)
         {
             UpdateUI(e.ChosenSpot);
+        }
+
+        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            usersForm.Show();
         }
     }
 }
