@@ -1,4 +1,4 @@
-﻿namespace GarageControlCenter.Models
+﻿namespace GarageControlCenterModels.Models
 {
     public class UserTicket
     {
@@ -6,21 +6,19 @@
         public int Id { get; set; }
         public int UserId { get; set; }
         public string Number { get; set; }
-        public DateOnly ValidFrom { get; set; }
-        public DateOnly ValidUntil { get; set;}
+        public DateTime ValidFrom { get; set; }
+        public DateTime ValidUntil { get; set; }
         public TicketState State { get; set; }
         public TicketType Type { get; set; }
         public bool isBlocked { get; set; }
- 
+
         public UserTicket()
         {
             Id = ticketCounter++;
             isBlocked = false;
             State = TicketState.Neutral;
         }
-
     }
-
 
     public enum TicketState
     {

@@ -1,13 +1,5 @@
-﻿using GarageControlCenter.Models;
-using System;
-using System.Collections.Generic;
+﻿using GarageControlCenterModels.Models;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace GarageControlCenterUI
 {
@@ -15,17 +7,22 @@ namespace GarageControlCenterUI
     public partial class TicketsForm : Form
     {
         List<Ticket> TicketList;
+        private BindingList<Ticket> bindingTicketList;
+        private BindingSource ticketBindingSource;
         public TicketsForm(List<Ticket> tickets)
         {
             TicketList = tickets;
             InitializeComponent();
+
+            bindingTicketList = new BindingList<Ticket>(TicketList);
+            ticketBindingSource = new BindingSource(bindingTicketList, null);
+            ticketGrid.DataSource = ticketBindingSource;
         }
 
         // Refresh the list with new values
         public void RefreshTickets()
         {
-            var bindingList = new BindingList<Ticket>(TicketList);
-            ticketGrid.DataSource = new BindingSource(bindingList, null);
+            bindingTicketList.ResetBindings();
         }
 
         private void TicketsForm_FormClosing(object sender, FormClosingEventArgs e)

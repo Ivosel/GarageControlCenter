@@ -1,7 +1,4 @@
-﻿using GarageControlCenter.Models;
-using System.Drawing.Printing;
-using System.Windows.Forms;
-using static GarageControlCenterUI.EntryDemonstration;
+﻿using GarageControlCenterModels.Models;
 
 namespace GarageControlCenterUI.Controls
 {

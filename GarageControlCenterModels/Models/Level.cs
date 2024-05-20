@@ -1,14 +1,13 @@
-﻿namespace GarageControlCenter.Models
+﻿namespace GarageControlCenterModels.Models
 {
-    // A class representing a level in the garage which consists of parking spots
     public class Level
     {
-        public int Id { get; set; }
+        public int Id { get;  set; }
         public int GarageId { get; set; }
         public Garage GarageRef { get; set; }
         public int LevelNumber { get; set; }
         public int Capacity { get; set; }
-        public List<ParkingSpot> Spots { get; set; }
+        public List<ParkingSpot> Spots { get;  set; }
 
         public Level()
         {

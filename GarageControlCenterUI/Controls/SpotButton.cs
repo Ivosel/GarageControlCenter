@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using GarageControlCenter.Models;
-
-namespace GarageControlCenterUI.Controls
+﻿namespace GarageControlCenterUI.Controls
 {
     public partial class SpotButton : Button
     {

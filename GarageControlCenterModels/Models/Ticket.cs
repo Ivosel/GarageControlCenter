@@ -1,12 +1,18 @@
-﻿namespace GarageControlCenter.Models
+﻿using System.ComponentModel;
+
+namespace GarageControlCenterModels.Models
 {
-    // A class representing parking tickets
     public class Ticket
     {
+        [Browsable(false)]
         private static int ticketCounter = 0;
+        [Browsable(false)]
         public int Id { get; set; }
+        [Browsable(false)]
         public Garage GarageRef { get; set; }
+        [Browsable(false)]
         public int GarageId { get; set; }
+
         public string TicketNumber { get; set; }
         public DateTime EntranceTime { get; set; }
         public bool IsPaid { get; set; }

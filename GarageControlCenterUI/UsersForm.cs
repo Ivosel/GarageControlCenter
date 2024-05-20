@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GarageControlCenterModels.Models;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using GarageControlCenter.Models;
 
 namespace GarageControlCenterUI
 {
     public partial class UsersForm : Form
     {
         public List<User> users = new List<User>();
+        private bool newTicketFlag = false;
+        private BindingList<User> bindingUserList;
+        private BindingSource userBindingSource;
+
 
         public UsersForm(List<User> garageUsers)
         {
@@ -22,6 +17,10 @@ namespace GarageControlCenterUI
             InitializeComponent();
             ClearTicketControls();
             ClearUserControls();
+
+            bindingUserList = new BindingList<User>(users);
+            userBindingSource = new BindingSource(bindingUserList, null);
+            usersListBox.DataSource = userBindingSource;
         }
 
         private void ClearUserControls()
@@ -103,30 +102,44 @@ namespace GarageControlCenterUI
                 existingUser.PhoneNumber = phoneNumberTextBox.Text;
                 existingUser.Email = emailTextBox.Text;
                 existingUser.RegistrationPlate = registrationPlateTextBox.Text;
-                if (validUntilTextBox.Visible == true)
+                if (newTicketFlag)
                 {
                     existingUser.AssignTicket(CreateTicket());
+                    newTicketFlag = false;
+                }
+                else if (existingUser.UserTicket != null)
+                {
+                    existingUser.UserTicket.ValidUntil = DateTime.ParseExact(validUntilTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
+                    existingUser.UserTicket.isBlocked = blockCheckBox.Checked;
+                    if (deleteTicketCheckBox.Checked) 
+                    { 
+                        existingUser.UserTicket = null;
+                        ClearTicketControls();
+                    }
+                    if (neutralCheckBox.Checked) { existingUser.UserTicket.State = TicketState.Neutral; }
                 }
             }
 
             else
             {
                 User createdUser = new User(lastNameTextBox.Text, firstNameTextBox.Text, phoneNumberTextBox.Text, emailTextBox.Text, registrationPlateTextBox.Text);
-                if (validUntilTextBox.Visible == true)
+                userIdTextBox.Text = createdUser.Id.ToString();
+                if (newTicketFlag)
                 {
                     createdUser.AssignTicket(CreateTicket());
+                    newTicketFlag = false;
                 }
                 users.Add(createdUser);
             }
 
-            RefreshUsers();
+            bindingUserList.ResetBindings();
         }
 
         private UserTicket CreateTicket()
         {
             UserTicket ticket = new UserTicket();
-            ticket.ValidFrom = DateOnly.ParseExact(validFromTextBox.Text, "dd.MM.yy.");
-            ticket.ValidUntil = DateOnly.ParseExact(validUntilTextBox.Text, "dd.MM.yy.");
+            ticket.ValidFrom = DateTime.ParseExact(validFromTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
+            ticket.ValidUntil = DateTime.ParseExact(validUntilTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
             switch (ticketTypeComboBox.SelectedIndex)
             {
                 case 0:
@@ -143,12 +156,6 @@ namespace GarageControlCenterUI
             }
 
             return ticket;
-        }
-
-        public void RefreshUsers()
-        {
-            var bindingList = new BindingList<User>(users);
-            usersListBox.DataSource = new BindingSource(bindingList, null);
         }
 
         private void usersListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -183,7 +190,8 @@ namespace GarageControlCenterUI
                     default:
                         break;
                 }
-                if (ticket.IsBlocked) { blockCheckBox.Checked = true; }
+
+                blockCheckBox.Checked = ticket.isBlocked;
 
                 ShowTicketControls();
             }
@@ -217,6 +225,7 @@ namespace GarageControlCenterUI
                 validFromTextBox.Text = from.ToString("dd.MM.yy");
                 validUntilTextBox.Text = until.ToString("dd.MM.yy");
                 ticketTypeComboBox.SelectedIndex = 0;
+                newTicketFlag = true;
                 ShowTicketControls();
             }
         }
@@ -229,7 +238,7 @@ namespace GarageControlCenterUI
                 users.Remove(selectedUser);
                 ClearUserControls();
                 ClearTicketControls();
-                RefreshUsers();
+                bindingUserList.ResetBindings();
             }
         }
     }

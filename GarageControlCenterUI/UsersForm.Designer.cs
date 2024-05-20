@@ -83,6 +83,7 @@
             // 
             // lastNameTextBox
             // 
+            lastNameTextBox.BackColor = Color.FromArgb(255, 255, 192);
             lastNameTextBox.Location = new Point(189, 27);
             lastNameTextBox.Name = "lastNameTextBox";
             lastNameTextBox.Size = new Size(263, 23);
@@ -145,6 +146,7 @@
             validFromTextBox.Location = new Point(313, 25);
             validFromTextBox.Mask = "00,00,00,";
             validFromTextBox.Name = "validFromTextBox";
+            validFromTextBox.ReadOnly = true;
             validFromTextBox.Size = new Size(119, 23);
             validFromTextBox.TabIndex = 11;
             // 
@@ -383,7 +385,8 @@
             Controls.Add(firstNameTextBox);
             Controls.Add(usersListBox);
             Name = "UsersForm";
-            Text = "UsersForm";
+            Text = "Users";
+            TopMost = true;
             FormClosing += UsersForm_FormClosing;
             ticketHistoryTabControl.ResumeLayout(false);
             ticketTabPage.ResumeLayout(false);

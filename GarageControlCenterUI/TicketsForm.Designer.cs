@@ -29,21 +29,9 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            garageBindingSource = new BindingSource(components);
             ticketGrid = new DataGridView();
-            ticketsBindingSource = new BindingSource(components);
-            garageBindingSource1 = new BindingSource(components);
-            ticketsBindingSource1 = new BindingSource(components);
-            ((System.ComponentModel.ISupportInitialize)garageBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ticketGrid).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)ticketsBindingSource).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)garageBindingSource1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)ticketsBindingSource1).BeginInit();
             SuspendLayout();
-            // 
-            // garageBindingSource
-            // 
-            garageBindingSource.DataSource = typeof(GarageControlCenter.Models.Garage);
             // 
             // ticketGrid
             // 
@@ -57,20 +45,6 @@
             ticketGrid.Size = new Size(444, 438);
             ticketGrid.TabIndex = 0;
             // 
-            // ticketsBindingSource
-            // 
-            ticketsBindingSource.DataMember = "Tickets";
-            ticketsBindingSource.DataSource = garageBindingSource;
-            // 
-            // garageBindingSource1
-            // 
-            garageBindingSource1.DataSource = typeof(GarageControlCenter.Models.Garage);
-            // 
-            // ticketsBindingSource1
-            // 
-            ticketsBindingSource1.DataMember = "Tickets";
-            ticketsBindingSource1.DataSource = garageBindingSource;
-            // 
             // TicketsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -81,19 +55,11 @@
             Text = "Tickets";
             TopMost = true;
             FormClosing += TicketsForm_FormClosing;
-            ((System.ComponentModel.ISupportInitialize)garageBindingSource).EndInit();
             ((System.ComponentModel.ISupportInitialize)ticketGrid).EndInit();
-            ((System.ComponentModel.ISupportInitialize)ticketsBindingSource).EndInit();
-            ((System.ComponentModel.ISupportInitialize)garageBindingSource1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)ticketsBindingSource1).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
-        private BindingSource garageBindingSource;
         private DataGridView ticketGrid;
-        private BindingSource garageBindingSource1;
-        private BindingSource ticketsBindingSource;
-        private BindingSource ticketsBindingSource1;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace GarageControlCenter.Models
+﻿namespace GarageControlCenterModels.Models
 {
     public class User
     {
@@ -12,7 +12,7 @@
         public string Email { get; set; }
         public string RegistrationPlate { get; set; }
         public UserTicket UserTicket { get; set; }
-        
+
         public User(string lastName, string firstName, string phoneNumber, string email, string registrationPlate)
         {
             Id = userCounter++;

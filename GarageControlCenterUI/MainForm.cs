@@ -1,4 +1,5 @@
-using GarageControlCenter.Models;
+using GarageControlCenterBackend.Services;
+using GarageControlCenterModels.Models;
 using GarageControlCenterUI.Controls;
 using System.ComponentModel;
 
@@ -8,17 +9,19 @@ namespace GarageControlCenterUI
     [DesignerCategory("Form")]
     public partial class MainForm : Form
     {
+        GarageService garageService { get; set; }
         public Garage myGarage;
+        public TicketsForm ticketsForm;
+        private UsersForm usersForm;
+        private EntryDemonstration entryDemo;
+        private ExitDemonstration exitDemo;
         private List<LevelGrid> levelGrids;
         private List<Button> overviewControls;
         private List<LevelButton> levelButtons;
-        public TicketsForm ticketsForm;
-        private EntryDemonstration entryDemo;
-        private ExitDemonstration exitDemo;
-        private UsersForm usersForm;
 
-        public MainForm()
+        public MainForm(GarageService service)
         {
+            garageService = service;
             InitializeComponent();
             StartApp();
         }
@@ -50,10 +53,7 @@ namespace GarageControlCenterUI
 
             // Initialize the tickets form
             ticketsForm = new TicketsForm(myGarage.Tickets);
-            ticketsForm.RefreshTickets();
             usersForm = new UsersForm(myGarage.Users);
-            usersForm.RefreshUsers();
-
 
             entryDemo = new EntryDemonstration(this);
             exitDemo = new ExitDemonstration(this);

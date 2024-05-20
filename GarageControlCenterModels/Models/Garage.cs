@@ -1,24 +1,25 @@
-﻿namespace GarageControlCenter.Models
+﻿namespace GarageControlCenterModels.Models
 {
-    // A class representing the garage
     public class Garage
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
         public List<Level> Levels { get; set; }
-        public EntranceBarrier Entrance {  get; set; }
-        public ExitBarrier Exit { get; set; }
         public int TotalCapacity { get; set; }
         public List<User> Users { get; set; }
         public List<Ticket> Tickets { get; set; }
 
+        public Garage()
+        {
+            Tickets = new List<Ticket>();
+            Users = new List<User>();
+            Levels = new List<Level>();
+        }
 
         public Garage(List<int> spotsPerLevelList)
         {
             // spotsPerLevellist recieved from a GUI form
-            Entrance = new EntranceBarrier();
-            Exit = new ExitBarrier();
             Tickets = new List<Ticket>();
             Users = new List<User>();
             Levels = new List<Level>();

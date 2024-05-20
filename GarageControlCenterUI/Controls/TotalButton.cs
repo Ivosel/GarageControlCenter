@@ -1,4 +1,4 @@
-﻿using GarageControlCenter.Models;
+﻿using GarageControlCenterModels.Models;
 
 namespace GarageControlCenterUI.Controls
 {

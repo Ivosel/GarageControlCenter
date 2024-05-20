@@ -1,13 +1,12 @@
-﻿namespace GarageControlCenter.Models
+﻿namespace GarageControlCenterModels.Models
 {
-    // A class representing a parking spot
     public class ParkingSpot
     {
-        public int Id { get; set; }
-        public Level LevelRef { get; set; }
-        public int LevelId { get; set; }
+        public int Id { get;  set; }
+        public Level LevelRef { get;  set; }
+        public int LevelId { get;  set; }
         public bool IsOccupied { get; set; }
-        public string Placement { get; set; }
+        public string Placement { get;  set; }
 
         public void ReserveSpot()
         {
@@ -17,6 +16,10 @@
         public void ReleaseSpot()
         {
             IsOccupied = false;
+        }
+
+        public ParkingSpot()
+        {
         }
 
         // Constructor to initialize the spot with its position in the garage
