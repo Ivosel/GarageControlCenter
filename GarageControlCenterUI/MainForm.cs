@@ -55,8 +55,8 @@ namespace GarageControlCenterUI
             ticketsForm = new TicketsForm(myGarage.Tickets);
             usersForm = new UsersForm(myGarage.Users);
 
-            entryDemo = new EntryDemonstration(this);
-            exitDemo = new ExitDemonstration(this);
+            entryDemo = new EntryDemonstration(myGarage);
+            exitDemo = new ExitDemonstration(myGarage);
 
             entryDemo.SubscribeToCustomerEntryEvent(HandleCustomerEntry);
             exitDemo.SubscribeToCustomerExitEvent(HandleCustomerExit);
@@ -192,11 +192,13 @@ namespace GarageControlCenterUI
         }
         private void HandleCustomerExit(object? sender, ExitDemonstration.CustomerExitEventArgs e)
         {
+            ticketsForm.RefreshTickets();
             UpdateUI(e.ChosenSpot);
         }
 
         private void HandleCustomerEntry(object? sender, EntryDemonstration.CustomerEntryEventArgs e)
         {
+            ticketsForm.RefreshTickets();
             UpdateUI(e.ChosenSpot);
         }
 

@@ -2,20 +2,15 @@
 {
     public class Garage
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Location { get; set; }
-        public List<Level> Levels { get; set; }
-        public int TotalCapacity { get; set; }
-        public List<User> Users { get; set; }
-        public List<Ticket> Tickets { get; set; }
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public string Location { get; private set; }
+        public List<Level> Levels { get; private set; }
+        public int TotalCapacity { get; private set; }
+        public List<User> Users { get; private set; }
+        public List<Ticket> Tickets { get; private set; }
 
-        public Garage()
-        {
-            Tickets = new List<Ticket>();
-            Users = new List<User>();
-            Levels = new List<Level>();
-        }
+        private Garage() { }
 
         public Garage(List<int> spotsPerLevelList)
         {
@@ -27,21 +22,11 @@
             // Create levels and parking spots on each level according to the list recieved
             for (int i = 0; i < spotsPerLevelList.Count; i++)
             {
-                var level = new Level
-                {
-                    LevelNumber = i + 1,
-                    Capacity = spotsPerLevelList[i],
-                    Spots = new List<ParkingSpot>()
-                };
+                var level = new Level(i + 1, spotsPerLevelList[i]);
 
                 for (int j = 1; j <= spotsPerLevelList[i]; j++)
                 {
-                    var spot = new ParkingSpot(i + 1, j)
-                    {
-                        // Mark all spots as free initially
-                        IsOccupied = false
-                    };
-
+                    var spot = new ParkingSpot(i + 1, j);
                     level.Spots.Add(spot);
                 }
 

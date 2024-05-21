@@ -71,7 +71,7 @@
             usersListBox.Location = new Point(5, 26);
             usersListBox.Name = "usersListBox";
             usersListBox.Size = new Size(165, 379);
-            usersListBox.TabIndex = 0;
+            usersListBox.TabIndex = 12;
             usersListBox.SelectedIndexChanged += usersListBox_SelectedIndexChanged;
             // 
             // firstNameTextBox
@@ -87,21 +87,21 @@
             lastNameTextBox.Location = new Point(189, 27);
             lastNameTextBox.Name = "lastNameTextBox";
             lastNameTextBox.Size = new Size(263, 23);
-            lastNameTextBox.TabIndex = 2;
+            lastNameTextBox.TabIndex = 0;
             // 
             // phoneNumberTextBox
             // 
             phoneNumberTextBox.Location = new Point(189, 82);
             phoneNumberTextBox.Name = "phoneNumberTextBox";
             phoneNumberTextBox.Size = new Size(263, 23);
-            phoneNumberTextBox.TabIndex = 3;
+            phoneNumberTextBox.TabIndex = 2;
             // 
             // emailTextBox
             // 
             emailTextBox.Location = new Point(506, 82);
             emailTextBox.Name = "emailTextBox";
             emailTextBox.Size = new Size(263, 23);
-            emailTextBox.TabIndex = 4;
+            emailTextBox.TabIndex = 3;
             // 
             // ticketHistoryTabControl
             // 
@@ -139,7 +139,7 @@
             validUntilTextBox.Mask = "00,00,00,";
             validUntilTextBox.Name = "validUntilTextBox";
             validUntilTextBox.Size = new Size(119, 23);
-            validUntilTextBox.TabIndex = 12;
+            validUntilTextBox.TabIndex = 5;
             // 
             // validFromTextBox
             // 
@@ -191,7 +191,7 @@
             deleteTicketCheckBox.Location = new Point(313, 153);
             deleteTicketCheckBox.Name = "deleteTicketCheckBox";
             deleteTicketCheckBox.Size = new Size(91, 19);
-            deleteTicketCheckBox.TabIndex = 6;
+            deleteTicketCheckBox.TabIndex = 8;
             deleteTicketCheckBox.Text = "Delete ticket";
             deleteTicketCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -201,7 +201,7 @@
             blockCheckBox.Location = new Point(313, 115);
             blockCheckBox.Name = "blockCheckBox";
             blockCheckBox.Size = new Size(87, 19);
-            blockCheckBox.TabIndex = 5;
+            blockCheckBox.TabIndex = 7;
             blockCheckBox.Text = "Block ticket";
             blockCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -211,7 +211,7 @@
             neutralCheckBox.Location = new Point(313, 77);
             neutralCheckBox.Name = "neutralCheckBox";
             neutralCheckBox.Size = new Size(96, 19);
-            neutralCheckBox.TabIndex = 4;
+            neutralCheckBox.TabIndex = 6;
             neutralCheckBox.Text = "Set to neutral";
             neutralCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -300,7 +300,7 @@
             registrationPlateTextBox.Location = new Point(506, 139);
             registrationPlateTextBox.Name = "registrationPlateTextBox";
             registrationPlateTextBox.Size = new Size(263, 23);
-            registrationPlateTextBox.TabIndex = 12;
+            registrationPlateTextBox.TabIndex = 4;
             // 
             // userIdLabel
             // 

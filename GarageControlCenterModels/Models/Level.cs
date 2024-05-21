@@ -2,15 +2,19 @@
 {
     public class Level
     {
-        public int Id { get;  set; }
-        public int GarageId { get; set; }
-        public Garage GarageRef { get; set; }
-        public int LevelNumber { get; set; }
-        public int Capacity { get; set; }
-        public List<ParkingSpot> Spots { get;  set; }
+        public int Id { get; private set; }
+        public int GarageId { get; private set; }
+        public Garage GarageRef { get; private set; }
+        public int LevelNumber { get; private set; }
+        public int Capacity { get; private set; }
+        public List<ParkingSpot> Spots { get; private set; }
 
-        public Level()
+        private Level() { }
+
+        public Level(int levelNumber, int capacity)
         {
+            LevelNumber = levelNumber;
+            Capacity = capacity;
             Spots = new List<ParkingSpot>();
         }
 

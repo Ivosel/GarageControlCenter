@@ -97,26 +97,47 @@ namespace GarageControlCenterUI
 
             if (existingUser != null)
             {
-                existingUser.FirstName = firstNameTextBox.Text;
-                existingUser.LastName = lastNameTextBox.Text;
-                existingUser.PhoneNumber = phoneNumberTextBox.Text;
-                existingUser.Email = emailTextBox.Text;
-                existingUser.RegistrationPlate = registrationPlateTextBox.Text;
+                existingUser.UpdateUser(
+                    lastNameTextBox.Text,
+                    firstNameTextBox.Text,
+                    phoneNumberTextBox.Text,
+                    emailTextBox.Text,
+                    registrationPlateTextBox.Text);
+
                 if (newTicketFlag)
                 {
                     existingUser.AssignTicket(CreateTicket());
+                    ticketNumberTextBox.Text = existingUser.UserTicket.Number;
                     newTicketFlag = false;
+
                 }
                 else if (existingUser.UserTicket != null)
                 {
-                    existingUser.UserTicket.ValidUntil = DateTime.ParseExact(validUntilTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
-                    existingUser.UserTicket.isBlocked = blockCheckBox.Checked;
-                    if (deleteTicketCheckBox.Checked) 
-                    { 
-                        existingUser.UserTicket = null;
+                    if (deleteTicketCheckBox.Checked)
+                    {
+                        existingUser.RemoveTicket();
                         ClearTicketControls();
                     }
-                    if (neutralCheckBox.Checked) { existingUser.UserTicket.State = TicketState.Neutral; }
+                    else
+                    {
+                        var ExtendDate = DateTime.ParseExact(validUntilTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
+                        existingUser.UserTicket.ExtendTicket(ExtendDate);
+
+                        if (neutralCheckBox.Checked)
+                        {
+                            existingUser.UserTicket.SetToNeutral();
+                        }
+
+                        if (blockCheckBox.Checked)
+                        {
+                            existingUser.UserTicket.BlockTicket();
+                        }
+                        else
+                        {
+                            existingUser.UserTicket.UnblockTicket();
+                        }
+                    }
+
                 }
             }
 
@@ -137,24 +158,25 @@ namespace GarageControlCenterUI
 
         private UserTicket CreateTicket()
         {
-            UserTicket ticket = new UserTicket();
-            ticket.ValidFrom = DateTime.ParseExact(validFromTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
-            ticket.ValidUntil = DateTime.ParseExact(validUntilTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
+            var from = DateTime.ParseExact(validFromTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
+            var until = DateTime.ParseExact(validUntilTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
+            TicketType type;
             switch (ticketTypeComboBox.SelectedIndex)
             {
                 case 0:
-                    ticket.Type = TicketType.WholeDay;
+                    type = TicketType.WholeDay;
                     break;
                 case 1:
-                    ticket.Type = TicketType.DayShift;
+                    type = TicketType.DayShift;
                     break;
                 case 2:
-                    ticket.Type = TicketType.NightShift;
+                    type = TicketType.NightShift;
                     break;
                 default:
+                    type = TicketType.WholeDay;
                     break;
             }
-
+            UserTicket ticket = new UserTicket(from, until, type);
             return ticket;
         }
 
@@ -175,7 +197,6 @@ namespace GarageControlCenterUI
                 ticketNumberTextBox.Text = ticket.Number;
                 validFromTextBox.Text = ticket.ValidFrom.ToString("dd.MM.yy.");
                 validUntilTextBox.Text = ticket.ValidUntil.ToString("dd.MM.yy.");
-                ticketNumberTextBox.Text = ticket.Id.ToString();
                 switch (ticket.Type)
                 {
                     case TicketType.WholeDay:
@@ -213,6 +234,7 @@ namespace GarageControlCenterUI
         private void newUserButton_Click(object sender, EventArgs e)
         {
             ClearUserControls();
+            ClearTicketControls();
         }
 
         private void newTicketButton_Click(object sender, EventArgs e)

@@ -6,7 +6,7 @@
         private static int GracePeriod = 10;
         public void MarkTicketPaid(Ticket ticket)
         {
-            ticket.IsPaid = true;
+            ticket.MarkTicketPaid();
         }
 
         public decimal CalculateTotalPrice(Ticket ticket)
