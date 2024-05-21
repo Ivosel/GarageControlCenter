@@ -42,7 +42,7 @@
                 Margin = new Padding(0, 10, 0, 0),
                 Anchor = AnchorStyles.None,
                 SizeMode = PictureBoxSizeMode.Zoom,
-                Image = Image.FromFile(@"Images\BarrierIcon.png")
+                Image = Resources.BarrierIcon
             };
 
             // Create a label for the barrier type

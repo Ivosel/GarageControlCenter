@@ -46,7 +46,7 @@ namespace GarageControlCenterUI.Controls
                 Margin = new Padding(0, 10, 0, 0),
                 Anchor = AnchorStyles.None,
                 SizeMode = PictureBoxSizeMode.Zoom,
-                Image = Image.FromFile(@"Images\PaymentMachineIcon.png")
+                Image = Resources.PaymentMachineIcon
             };
 
             // Create a label for the payment machine name

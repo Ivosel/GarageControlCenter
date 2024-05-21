@@ -50,7 +50,7 @@ namespace GarageControlCenterUI.Controls
                 Margin = new Padding(0, 10, 0, 0),
                 Anchor = AnchorStyles.None,
                 SizeMode = PictureBoxSizeMode.Zoom,
-                Image = Image.FromFile(@"Images\GarageIcon.png")
+                Image = Resources.GarageIcon
             };
 
             // Add button elements to the TableLayoutPanel
