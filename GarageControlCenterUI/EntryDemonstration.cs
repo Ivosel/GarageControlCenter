@@ -1,4 +1,6 @@
-﻿using GarageControlCenterModels.Models;
+﻿using GarageControlCenterBackend.Models;
+using GarageControlCenterBackend.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace GarageControlCenterUI
@@ -7,17 +9,19 @@ namespace GarageControlCenterUI
     public partial class EntryDemonstration : Form
     {
         private Garage MyGarage;
+        private GarageService Service;
         EntranceBarrier Entrance { get; set; }
         public event EventHandler<CustomerEntryEventArgs> CustomerEntry;
 
-        public EntryDemonstration(Garage myGarage)
+        public EntryDemonstration(Garage myGarage, GarageService service)
         {
             MyGarage = myGarage;
+            Service = service;
             Entrance = new EntranceBarrier();
             InitializeComponent();
         }
 
-        private void TakeTicketButton_Click(object sender, EventArgs e)
+        private async void TakeTicketButton_Click(object sender, EventArgs e)
         {
 
             // Find levels with available spots
@@ -27,6 +31,7 @@ namespace GarageControlCenterUI
             {
                 Ticket ticket = Entrance.IssueTicket();
                 MyGarage.Tickets.Add(ticket);
+                await Service.AddTicketAsync(ticket);
                 UpdateParkingSpot(availableLevels);
                 Entrance.OpenBarrier();
             }

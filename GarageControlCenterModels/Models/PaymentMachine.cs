@@ -1,13 +1,9 @@
-﻿namespace GarageControlCenterModels.Models
+﻿namespace GarageControlCenterBackend.Models
 {
     public class PaymentMachine
     {
         private static decimal Rate = 0.8M;
         private static int GracePeriod = 10;
-        public void MarkTicketPaid(Ticket ticket)
-        {
-            ticket.MarkTicketPaid();
-        }
 
         public decimal CalculateTotalPrice(Ticket ticket)
         {

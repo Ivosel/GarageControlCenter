@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace GarageControlCenterModels.Models
+namespace GarageControlCenterBackend.Models
 {
     public class Ticket
     {

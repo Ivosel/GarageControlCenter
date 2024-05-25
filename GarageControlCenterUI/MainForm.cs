@@ -1,5 +1,5 @@
 using GarageControlCenterBackend.Services;
-using GarageControlCenterModels.Models;
+using GarageControlCenterBackend.Models;
 using GarageControlCenterUI.Controls;
 using System.ComponentModel;
 
@@ -9,7 +9,7 @@ namespace GarageControlCenterUI
     [DesignerCategory("Form")]
     public partial class MainForm : Form
     {
-        GarageService garageService { get; set; }
+        public GarageService garageService;
         public Garage myGarage;
         public TicketsForm ticketsForm;
         private UsersForm usersForm;
@@ -28,35 +28,42 @@ namespace GarageControlCenterUI
 
         private void StartApp()
         {
-            // Display a welcome message and prompt the user to choose a garage
-            DialogResult result = MessageBox.Show("Welcome to the garage control center!", "Choose a garage", MessageBoxButtons.YesNo);
-            if (result == DialogResult.Yes)
+            using (SelectGarageDialog createGarageDialog = new SelectGarageDialog())
             {
-                // Prompt the user to choose the number of levels for the garage
-                int numLevels = ChooseNumberOfLevelsDialog();
-                if (numLevels > 0)
+                if (createGarageDialog.ShowDialog() == DialogResult.Yes)
                 {
-                    // Prompt the user to enter the spots per level for the garage
-                    EnterSpotsPerLevelForm enterSpotsForm = new EnterSpotsPerLevelForm(numLevels);
-                    enterSpotsForm.CreateGarageRequested += EnterSpotsForm_CreateGarageRequested;
-
-                    if (enterSpotsForm.ShowDialog() == DialogResult.OK)
+                    GarageInfo info = ChooseNumberOfLevelsDialog();
+                    if (info.SelectedNumberOfLevels > 0)
                     {
-                        MessageBox.Show("Garage created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        EnterSpotsPerLevelForm enterSpotsForm = new EnterSpotsPerLevelForm(info.SelectedNumberOfLevels);
+                        enterSpotsForm.CreateGarageRequested += (s, spotsPerLevelList) => EnterSpotsForm_CreateGarageRequested(s, info.Name, spotsPerLevelList);
+
+                        if (enterSpotsForm.ShowDialog() == DialogResult.OK)
+                        {
+                            MessageBox.Show("Garage created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
                 }
-            }
-            else
-            {
-                // Implement logic to open an existing garage
+
+                else
+                {
+                    using (GarageListDialog selectGarageDialog = new GarageListDialog(garageService))
+                    {
+                        if (selectGarageDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            myGarage = selectGarageDialog.SelectedGarage;
+                        }
+                    }
+                }
+
             }
 
             // Initialize the tickets form
             ticketsForm = new TicketsForm(myGarage.Tickets);
             usersForm = new UsersForm(myGarage.Users);
 
-            entryDemo = new EntryDemonstration(myGarage);
-            exitDemo = new ExitDemonstration(myGarage);
+            entryDemo = new EntryDemonstration(myGarage, garageService);
+            exitDemo = new ExitDemonstration(myGarage, garageService);
 
             entryDemo.SubscribeToCustomerEntryEvent(HandleCustomerEntry);
             exitDemo.SubscribeToCustomerExitEvent(HandleCustomerExit);
@@ -90,18 +97,19 @@ namespace GarageControlCenterUI
 
 
         // Method to prompt the user to choose the number of levels for the garage
-        private int ChooseNumberOfLevelsDialog()
+        private GarageInfo ChooseNumberOfLevelsDialog()
         {
             using (var levelForm = new ChooseNumberOfLevelsForm())
             {
-                return levelForm.ShowDialog() == DialogResult.OK ? levelForm.SelectedNumberOfLevels : 0;
+                return levelForm.ShowDialog() == DialogResult.OK ? levelForm.info : new GarageInfo();
             }
         }
 
         // Event handler for when the spots per level form requests to create a garage
-        private void EnterSpotsForm_CreateGarageRequested(object sender, List<int> spotsPerLevelList)
+        private async void EnterSpotsForm_CreateGarageRequested(object sender, string name, List<int> spotsPerLevelList)
         {
-            myGarage = new Garage(spotsPerLevelList); // Create a new garage instance
+            myGarage = new Garage(spotsPerLevelList, name); // Create a new garage instance
+            await garageService.AddGarageAsync(myGarage);
         }
 
         // Populate the level buttons on the main form
@@ -190,15 +198,17 @@ namespace GarageControlCenterUI
         {
             ticketsForm.Show();
         }
-        private void HandleCustomerExit(object? sender, ExitDemonstration.CustomerExitEventArgs e)
+        private async void HandleCustomerExit(object? sender, ExitDemonstration.CustomerExitEventArgs e)
         {
             ticketsForm.RefreshTickets();
+            await garageService.ReleaseParkingSpotAsync(e.ChosenSpot);
             UpdateUI(e.ChosenSpot);
         }
 
-        private void HandleCustomerEntry(object? sender, EntryDemonstration.CustomerEntryEventArgs e)
+        private async void HandleCustomerEntry(object? sender, EntryDemonstration.CustomerEntryEventArgs e)
         {
             ticketsForm.RefreshTickets();
+            await garageService.OccupyParkingSpotAsync(e.ChosenSpot);
             UpdateUI(e.ChosenSpot);
         }
 

@@ -1,4 +1,4 @@
-﻿using GarageControlCenterModels.Models;
+﻿using GarageControlCenterBackend.Models;
 using System.Data;
 
 namespace GarageControlCenterUI.Controls
@@ -19,7 +19,7 @@ namespace GarageControlCenterUI.Controls
 
         private void CreateSpotButtons()
         {
-            foreach (ParkingSpot spot in selectedLevel.Spots) { spotButtons.Add(new SpotButton(spot.Placement)); }
+            foreach (ParkingSpot spot in selectedLevel.Spots) { spotButtons.Add(new SpotButton(spot)); }
         }
 
         private void CreateGrid(int numberOfButtons)

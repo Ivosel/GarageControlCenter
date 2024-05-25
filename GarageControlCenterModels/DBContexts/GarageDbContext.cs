@@ -1,4 +1,4 @@
-﻿using GarageControlCenterModels.Models;
+﻿using GarageControlCenterBackend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GarageControlCenterBackend.DBContexts

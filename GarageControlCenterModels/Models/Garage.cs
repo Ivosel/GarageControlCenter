@@ -1,10 +1,9 @@
-﻿namespace GarageControlCenterModels.Models
+﻿namespace GarageControlCenterBackend.Models
 {
     public class Garage
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
-        public string Location { get; private set; }
         public List<Level> Levels { get; private set; }
         public int TotalCapacity { get; private set; }
         public List<User> Users { get; private set; }
@@ -12,9 +11,10 @@
 
         private Garage() { }
 
-        public Garage(List<int> spotsPerLevelList)
+        public Garage(List<int> spotsPerLevelList, string name)
         {
             // spotsPerLevellist recieved from a GUI form
+            Name = name;
             Tickets = new List<Ticket>();
             Users = new List<User>();
             Levels = new List<Level>();
@@ -38,6 +38,11 @@
             {
                 TotalCapacity += level.Capacity;
             }
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
 
         // Return a number of total spots occupied

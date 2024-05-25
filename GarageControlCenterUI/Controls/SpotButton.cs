@@ -1,21 +1,23 @@
-﻿namespace GarageControlCenterUI.Controls
+﻿using GarageControlCenterBackend.Models;
+
+namespace GarageControlCenterUI.Controls
 {
     public partial class SpotButton : Button
     {
-        string Location;
-        public SpotButton(string location)
+        private ParkingSpot parkingSpot;
+        public SpotButton(ParkingSpot spot)
         {
-            Location = location;
+            parkingSpot = spot;
             InitializeButton();
         }
 
         private void InitializeButton()
         {
-            Text = $"{Location}";
+            Text = parkingSpot.Placement;
             Size = new Size(60, 80);
             Enabled = false;
             Margin = new Padding(0);
-            BackColor = Color.LightGreen;
+            BackColor = parkingSpot.IsOccupied ? Color.Red : Color.LightGreen;
         }
     }
 }

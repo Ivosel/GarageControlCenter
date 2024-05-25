@@ -1,4 +1,5 @@
-﻿using GarageControlCenterModels.Models;
+﻿using GarageControlCenterBackend.Models;
+using GarageControlCenterBackend.Services;
 using System.Data;
 
 namespace GarageControlCenterUI
@@ -7,17 +8,19 @@ namespace GarageControlCenterUI
     public partial class ExitDemonstration : Form
     {
         private Garage MyGarage;
+        private GarageService Service;
         ExitBarrier Exit { get; set; }
         public event EventHandler<CustomerExitEventArgs> CustomerExit;
 
-        public ExitDemonstration(Garage myGarage)
+        public ExitDemonstration(Garage myGarage, GarageService service)
         {
+            Service = service;
             MyGarage = myGarage;
             Exit = new ExitBarrier();
             InitializeComponent();
         }
 
-        private void InsertTicketButton_Click(object sender, EventArgs e)
+        private async void InsertTicketButton_Click(object sender, EventArgs e)
         {
             // Get the ticket number entered by the user
             string ticketNumber = ticketNumberTextBox.Text;
@@ -33,6 +36,7 @@ namespace GarageControlCenterUI
                 if (Exit.IsOpen)
                 {
                     MyGarage.Tickets.Remove(ticket);
+                    await Service.RemoveTicketAsync(ticket);
                     UpdateParkingSpot();
                     MessageBox.Show("Thank you for using our garage!", "Barrier Open", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Exit.CloseBarrier();

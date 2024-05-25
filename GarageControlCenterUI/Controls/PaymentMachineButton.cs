@@ -1,4 +1,4 @@
-﻿using GarageControlCenterModels.Models;
+﻿using GarageControlCenterBackend.Models;
 
 namespace GarageControlCenterUI.Controls
 {
@@ -111,7 +111,7 @@ namespace GarageControlCenterUI.Controls
         }
 
         // Handle an unpaid ticket
-        private void HandleUnpaidTicket(Ticket ticket)
+        private async void HandleUnpaidTicket(Ticket ticket)
         {
             decimal price = Machine.CalculateTotalPrice(ticket);
 
@@ -120,7 +120,8 @@ namespace GarageControlCenterUI.Controls
             {
                 // Mark the ticket as paid and refresh tickets
                 ShowMessage("You are within our grace period, you may exit free of charge!", "Grace Period", MessageBoxIcon.Information);
-                Machine.MarkTicketPaid(ticket);
+                ticket.MarkTicketPaid();
+                await MainForm.garageService.UpdateTicketAsync(ticket);
                 MainForm.ticketsForm.RefreshTickets();
                 return;
             }
@@ -131,7 +132,8 @@ namespace GarageControlCenterUI.Controls
             // Process payment based on user response
             if (result == DialogResult.Yes)
             {
-                Machine.MarkTicketPaid(ticket);
+                ticket.MarkTicketPaid();
+                await MainForm.garageService.UpdateTicketAsync(ticket);
                 MainForm.ticketsForm.RefreshTickets();
                 ShowMessage("Payment accepted, please remove your ticket!", "Payment Accepted", MessageBoxIcon.Information);
             }

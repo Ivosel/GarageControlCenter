@@ -31,12 +31,14 @@
             NumberOfLevelsLabel = new Label();
             NumberOfLevelsSelect = new ComboBox();
             NumberOfLevelsOK = new Button();
+            GarageNameTextBox = new TextBox();
+            GarageNameLabel = new Label();
             SuspendLayout();
             // 
             // NumberOfLevelsLabel
             // 
             NumberOfLevelsLabel.AutoSize = true;
-            NumberOfLevelsLabel.Location = new Point(12, 31);
+            NumberOfLevelsLabel.Location = new Point(23, 100);
             NumberOfLevelsLabel.Name = "NumberOfLevelsLabel";
             NumberOfLevelsLabel.Size = new Size(180, 15);
             NumberOfLevelsLabel.TabIndex = 0;
@@ -47,14 +49,14 @@
             // 
             NumberOfLevelsSelect.FormattingEnabled = true;
             NumberOfLevelsSelect.Items.AddRange(new object[] { "1", "2", "3", "4", "5" });
-            NumberOfLevelsSelect.Location = new Point(198, 31);
+            NumberOfLevelsSelect.Location = new Point(244, 97);
             NumberOfLevelsSelect.Name = "NumberOfLevelsSelect";
-            NumberOfLevelsSelect.Size = new Size(58, 23);
+            NumberOfLevelsSelect.Size = new Size(101, 23);
             NumberOfLevelsSelect.TabIndex = 1;
             // 
             // NumberOfLevelsOK
             // 
-            NumberOfLevelsOK.Location = new Point(181, 92);
+            NumberOfLevelsOK.Location = new Point(270, 162);
             NumberOfLevelsOK.Name = "NumberOfLevelsOK";
             NumberOfLevelsOK.Size = new Size(75, 23);
             NumberOfLevelsOK.TabIndex = 2;
@@ -62,15 +64,35 @@
             NumberOfLevelsOK.UseVisualStyleBackColor = true;
             NumberOfLevelsOK.Click += NumberOfLevelsOK_Click;
             // 
+            // GarageNameTextBox
+            // 
+            GarageNameTextBox.Location = new Point(151, 47);
+            GarageNameTextBox.Name = "GarageNameTextBox";
+            GarageNameTextBox.Size = new Size(194, 23);
+            GarageNameTextBox.TabIndex = 3;
+            // 
+            // GarageNameLabel
+            // 
+            GarageNameLabel.AutoSize = true;
+            GarageNameLabel.Location = new Point(23, 50);
+            GarageNameLabel.Name = "GarageNameLabel";
+            GarageNameLabel.Size = new Size(109, 15);
+            GarageNameLabel.TabIndex = 4;
+            GarageNameLabel.Text = "Enter garage name:";
+            // 
             // ChooseNumberOfLevelsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(293, 145);
+            ClientSize = new Size(371, 206);
+            Controls.Add(GarageNameLabel);
+            Controls.Add(GarageNameTextBox);
             Controls.Add(NumberOfLevelsOK);
             Controls.Add(NumberOfLevelsSelect);
             Controls.Add(NumberOfLevelsLabel);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "ChooseNumberOfLevelsForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "ChooseNumberOfLevelsForm";
@@ -83,5 +105,7 @@
         private Label NumberOfLevelsLabel;
         private ComboBox NumberOfLevelsSelect;
         private Button NumberOfLevelsOK;
+        private TextBox GarageNameTextBox;
+        private Label GarageNameLabel;
     }
 }
