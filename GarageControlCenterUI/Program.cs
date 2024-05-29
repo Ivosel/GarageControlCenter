@@ -3,6 +3,7 @@ using GarageControlCenterBackend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace GarageControlCenterUI
 {
@@ -17,9 +18,10 @@ namespace GarageControlCenterUI
 
             var serviceProvider = ConfigureServices();
 
-            var service = serviceProvider.GetRequiredService<GarageService>();
+            var garageService = serviceProvider.GetRequiredService<GarageService>();
+            var userService = serviceProvider.GetRequiredService<UserService>();
 
-            var mainForm = new MainForm(service);
+            var mainForm = new MainForm(garageService, userService);
 
             Application.Run(mainForm);
         }
@@ -36,7 +38,16 @@ namespace GarageControlCenterUI
             services.AddDbContext<GarageDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddLogging(builder =>
+            {
+                builder.AddConfiguration(configuration.GetSection("Logging"));
+                builder.AddConsole(); // Log to the console
+                builder.AddDebug();// Log to debug output
+                // You can add other logging providers here, like Azure App Service, etc.
+            });
+
             services.AddScoped<GarageService>();
+            services.AddScoped<UserService>();
 
             return services.BuildServiceProvider();
         }

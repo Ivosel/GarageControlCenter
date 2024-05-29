@@ -1,8 +1,7 @@
 ﻿namespace GarageControlCenterBackend.Models
 {
-    public class User
+    public class GarageUser
     {
-        private static int userCounter = 0;
         public int Id { get; private set; }
         public Garage GarageRef { get; private set; }
         public int GarageId { get; private set; }
@@ -13,10 +12,9 @@
         public string RegistrationPlate { get; private set; }
         public UserTicket UserTicket { get; private set; }
 
-        private User() { }
-        public User(string lastName, string firstName, string phoneNumber, string email, string registrationPlate)
+        private GarageUser() { }
+        public GarageUser(string lastName, string firstName, string phoneNumber, string email, string registrationPlate)
         {
-            Id = userCounter++;
             LastName = lastName;
             FirstName = firstName;
             PhoneNumber = phoneNumber;

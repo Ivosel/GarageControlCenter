@@ -6,7 +6,7 @@
         public string Name { get; private set; }
         public List<Level> Levels { get; private set; }
         public int TotalCapacity { get; private set; }
-        public List<User> Users { get; private set; }
+        public List<GarageUser> Users { get; private set; }
         public List<Ticket> Tickets { get; private set; }
 
         private Garage() { }
@@ -16,7 +16,7 @@
             // spotsPerLevellist recieved from a GUI form
             Name = name;
             Tickets = new List<Ticket>();
-            Users = new List<User>();
+            Users = new List<GarageUser>();
             Levels = new List<Level>();
 
             // Create levels and parking spots on each level according to the list recieved

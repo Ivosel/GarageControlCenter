@@ -72,7 +72,7 @@
             usersListBox.Name = "usersListBox";
             usersListBox.Size = new Size(165, 379);
             usersListBox.TabIndex = 12;
-            usersListBox.SelectedIndexChanged += usersListBox_SelectedIndexChanged;
+            usersListBox.SelectedIndexChanged += UsersListBox_SelectedIndexChanged;
             // 
             // firstNameTextBox
             // 

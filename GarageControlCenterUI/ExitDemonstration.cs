@@ -7,68 +7,79 @@ namespace GarageControlCenterUI
     // A form to demonstrate an exit from the garage
     public partial class ExitDemonstration : Form
     {
-        private Garage MyGarage;
-        private GarageService Service;
-        ExitBarrier Exit { get; set; }
+        private readonly Garage myGarage;
+        private readonly GarageService service;
+        private readonly Random random;
+        ExitBarrier Exit { get; }
+
         public event EventHandler<CustomerExitEventArgs> CustomerExit;
 
-        public ExitDemonstration(Garage myGarage, GarageService service)
+        public ExitDemonstration(Garage garage, GarageService garageService)
         {
-            Service = service;
-            MyGarage = myGarage;
+            service = garageService;
+            myGarage = garage;
+            random = new Random();
             Exit = new ExitBarrier();
             InitializeComponent();
         }
 
         private async void InsertTicketButton_Click(object sender, EventArgs e)
         {
-            // Get the ticket number entered by the user
-            string ticketNumber = ticketNumberTextBox.Text;
-
-            // Search for a ticket with the entered ticket number
-            Ticket ticket = MyGarage.Tickets.FirstOrDefault(t => t.TicketNumber == ticketNumber);
-
-            if (ticket != null)
+            try
             {
-                // Ticket found, check if it's paid
-                Exit.ReadTicket(ticket);
+                // Get the ticket number entered by the user
+                string ticketNumber = ticketNumberTextBox.Text;
 
-                if (Exit.IsOpen)
+                // Search for a ticket with the entered ticket number
+                var ticket = myGarage.Tickets.FirstOrDefault(t => t.TicketNumber == ticketNumber);
+
+                if (ticket != null)
                 {
-                    MyGarage.Tickets.Remove(ticket);
-                    await Service.RemoveTicketAsync(ticket);
-                    UpdateParkingSpot();
-                    MessageBox.Show("Thank you for using our garage!", "Barrier Open", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Exit.CloseBarrier();
+                    // Ticket found, check if it's paid
+                    Exit.ReadTicket(ticket);
+
+                    if (Exit.IsOpen)
+                    {
+                        myGarage.Tickets.Remove(ticket);
+                        await service.RemoveTicketAsync(ticket);
+                        UpdateParkingSpot();
+                        MessageBox.Show("Thank you for using our garage!", "Barrier Open", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ticket not paid. Please pay the ticket on the automatic payment machine!", "Barrier Closed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
                 else
                 {
-                    // If the ticket is not paid, display a message
-                    MessageBox.Show("Ticket not paid. Please pay the ticket on the automatic payment machine!", "Barrier Closed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Invalid ticket number. Please enter a valid ticket number.", "Invalid Ticket", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                // Ticket not found, display a message
-                MessageBox.Show("Invalid ticket number. Please enter a valid ticket number.", "Invalid Ticket", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Handle exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                Exit.CloseBarrier();
             }
         }
 
         private void UpdateParkingSpot()
         {
-            List<Level> availableLevels = MyGarage.Levels.Where(level => level.OccupiedSpots() > 0).ToList();
+            var availableLevels = myGarage.Levels.Where(level => level.OccupiedSpots() > 0).ToList();
 
             // Randomly select a level from the used levels
-            Random random = new Random();
             int randomLevelIndex = random.Next(availableLevels.Count);
-            Level chosenLevelObject = availableLevels[randomLevelIndex];
+            var chosenLevel = availableLevels[randomLevelIndex];
 
             // Filter spots that are occupied in the chosen level
-            List<ParkingSpot> usedSpots = chosenLevelObject.Spots.Where(spot => spot.IsOccupied).ToList();
+            var usedSpots = chosenLevel.Spots.Where(spot => spot.IsOccupied).ToList();
 
             // Select a random spot from the occupied spots
             int randomSpotIndex = random.Next(usedSpots.Count);
-            ParkingSpot chosenSpot = usedSpots[randomSpotIndex];
+            var chosenSpot = usedSpots[randomSpotIndex];
             chosenSpot.ReleaseSpot();
             CustomerExit?.Invoke(this, new CustomerExitEventArgs(chosenSpot));
         }

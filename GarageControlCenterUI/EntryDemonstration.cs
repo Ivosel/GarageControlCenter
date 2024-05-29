@@ -1,6 +1,6 @@
 ﻿using GarageControlCenterBackend.Models;
 using GarageControlCenterBackend.Services;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Data;
 
 namespace GarageControlCenterUI
@@ -8,59 +8,71 @@ namespace GarageControlCenterUI
     // A form to demonstrate an entrance to the garage
     public partial class EntryDemonstration : Form
     {
-        private Garage MyGarage;
-        private GarageService Service;
-        EntranceBarrier Entrance { get; set; }
+        private readonly Garage myGarage;
+        private readonly GarageService service;
+        private readonly Random random;
+        EntranceBarrier Entrance { get; }
+
         public event EventHandler<CustomerEntryEventArgs> CustomerEntry;
 
-        public EntryDemonstration(Garage myGarage, GarageService service)
+        public EntryDemonstration(Garage garage, GarageService garageService)
         {
-            MyGarage = myGarage;
-            Service = service;
+            myGarage = garage;
+            service = garageService;
+            random = new Random();
             Entrance = new EntranceBarrier();
             InitializeComponent();
         }
 
         private async void TakeTicketButton_Click(object sender, EventArgs e)
         {
-
-            // Find levels with available spots
-            List<Level> availableLevels = MyGarage.Levels.Where(level => level.FreeSpots() > 0).ToList();
-
-            if (availableLevels.Count > 0)
+            try
             {
-                Ticket ticket = Entrance.IssueTicket();
-                MyGarage.Tickets.Add(ticket);
-                await Service.AddTicketAsync(ticket);
-                UpdateParkingSpot(availableLevels);
-                Entrance.OpenBarrier();
+                // Find levels with available spots
+                var availableLevels = myGarage.Levels.Where(level => level.FreeSpots() > 0).ToList();
+
+                if (availableLevels.Count > 0)
+                {
+                    var ticket = Entrance.IssueTicket();
+                    myGarage.Tickets.Add(ticket);
+                    await service.AddTicketAsync(ticket);
+                    UpdateParkingSpot(availableLevels);
+                    Entrance.OpenBarrier();
+                }
+                else
+                {
+                    // Handle case where all levels are full
+                    MessageBox.Show("No available spots in the garage.");
+                }
             }
 
-            else
+            catch (Exception ex)
             {
-                // Handle case where all levels are full
-                MessageBox.Show("No available spots in the garage.");
+                // Handle exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}");
             }
 
-            Entrance.CloseBarrier();
+            finally
+            {
+                Entrance.CloseBarrier();
+            }
         }
 
         private void UpdateParkingSpot(List<Level> availableLevels)
         {
             // Randomly select a level from the available levels
-            Random random = new Random();
             int randomLevelIndex = random.Next(availableLevels.Count);
-            Level chosenLevelObject = availableLevels[randomLevelIndex];
+            var chosenLevel = availableLevels[randomLevelIndex];
 
             // Filter spots that are not occupied in the chosen level
-            List<ParkingSpot> availableSpots = chosenLevelObject.Spots.Where(spot => !spot.IsOccupied).ToList();
+            var availableSpots = chosenLevel.Spots.Where(spot => !spot.IsOccupied).ToList();
 
             // Select a random spot from the available spots
             int randomSpotIndex = random.Next(availableSpots.Count);
-            ParkingSpot chosenSpot = availableSpots[randomSpotIndex];
+            var chosenSpot = availableSpots[randomSpotIndex];
             chosenSpot.ReserveSpot();
+
             CustomerEntry?.Invoke(this, new CustomerEntryEventArgs(chosenSpot));
-            Entrance.CloseBarrier();
         }
 
         private void InsertTicketButton_Click(object sender, EventArgs e)

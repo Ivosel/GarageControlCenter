@@ -9,7 +9,8 @@ namespace GarageControlCenterUI
     [DesignerCategory("Form")]
     public partial class MainForm : Form
     {
-        public GarageService garageService;
+        public readonly GarageService garageService;
+        private readonly UserService userService;
         public Garage myGarage;
         public TicketsForm ticketsForm;
         private UsersForm usersForm;
@@ -19,9 +20,10 @@ namespace GarageControlCenterUI
         private List<Button> overviewControls;
         private List<LevelButton> levelButtons;
 
-        public MainForm(GarageService service)
+        public MainForm(GarageService garageService, UserService userService)
         {
-            garageService = service;
+            this.garageService = garageService;
+            this.userService = userService;
             InitializeComponent();
             StartApp();
         }
@@ -58,15 +60,13 @@ namespace GarageControlCenterUI
 
             }
 
-            // Initialize the tickets form
             ticketsForm = new TicketsForm(myGarage.Tickets);
-            usersForm = new UsersForm(myGarage.Users);
+            usersForm = new UsersForm(myGarage.Users, userService);
 
             entryDemo = new EntryDemonstration(myGarage, garageService);
             exitDemo = new ExitDemonstration(myGarage, garageService);
 
-            entryDemo.SubscribeToCustomerEntryEvent(HandleCustomerEntry);
-            exitDemo.SubscribeToCustomerExitEvent(HandleCustomerExit);
+            SubscribeToEvents();
 
             levelGrids = new List<LevelGrid>();
             levelButtons = new List<LevelButton>();
@@ -90,11 +90,16 @@ namespace GarageControlCenterUI
             overviewControls.Add(exit);
             overviewControls.Add(paymentMachine);
 
-            PopulateLevelButtons(); // Populate the level buttons on the main form
+            InitializeOverviewButton();
+            InitializeLevelButtons();
             OverviewButton_Click(this, EventArgs.Empty); // Show the overview (HOME) on the main form
         }
 
-
+        private void SubscribeToEvents()
+        {
+            entryDemo.SubscribeToCustomerEntryEvent(HandleCustomerEntry);
+            exitDemo.SubscribeToCustomerExitEvent(HandleCustomerExit);
+        }
 
         // Method to prompt the user to choose the number of levels for the garage
         private GarageInfo ChooseNumberOfLevelsDialog()
@@ -113,24 +118,26 @@ namespace GarageControlCenterUI
         }
 
         // Populate the level buttons on the main form
-        public void PopulateLevelButtons()
+        private void InitializeOverviewButton()
         {
-            levelListLayout.Controls.Clear();
+            Button overviewButton = new Button
+            {
+                Text = "HOME",
+                Width = levelListLayout.Width - 10,
+                Height = levelListLayout.Width - 10,
+                Font = new Font("Arial", 14, FontStyle.Bold),
+                FlatAppearance = { BorderSize = 3 },
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.LightGray,
+                ForeColor = Color.Black,
+                Margin = new Padding(10, 10, 10, 50)
+            };
+            overviewButton.Click += OverviewButton_Click;
+            levelListLayout.Controls.Add(overviewButton);
+        }
 
-            // Create the overview button
-            Button overviewButton = new Button();
-            overviewButton.Text = "HOME";
-            overviewButton.Width = levelListLayout.Width - 10;
-            overviewButton.Height = levelListLayout.Width - 10;
-            overviewButton.Font = new Font("Arial", 14, FontStyle.Bold);
-            overviewButton.FlatAppearance.BorderSize = 3;
-            overviewButton.FlatStyle = FlatStyle.Flat;
-            overviewButton.BackColor = Color.LightGray;
-            overviewButton.ForeColor = Color.Black;
-            overviewButton.Margin = new Padding(10, 10, 10, 50);
-            overviewButton.Click += new EventHandler(OverviewButton_Click); // Event handler for overview button click
-            levelListLayout.Controls.Add(overviewButton); // Add the overview button to the layout
-
+        private void InitializeLevelButtons()
+        {
             // Create buttons for each level in the garage
             foreach (LevelButton levelButton in levelButtons)
             {
@@ -140,15 +147,22 @@ namespace GarageControlCenterUI
                 levelListLayout.Controls.Add(levelButton);
             }
         }
+
         private void UpdateUI(ParkingSpot chosenSpot)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => UpdateUI(chosenSpot)));
+                return;
+            }
+
             var levelButton = levelButtons.FirstOrDefault(b => b.Level.LevelNumber == int.Parse(chosenSpot.Placement[0].ToString()));
             var levelGrid = levelGrids.FirstOrDefault(g => g.selectedLevel.LevelNumber == int.Parse(chosenSpot.Placement[0].ToString()));
-            TotalButton total = overviewControls.OfType<TotalButton>().FirstOrDefault();
+            var total = overviewControls.OfType<TotalButton>().FirstOrDefault();
 
-            total.RefreshLabels();
-            levelButton.RefreshLabels();
-            levelGrid.RefreshGrid(chosenSpot);
+            total?.RefreshLabels();
+            levelButton?.RefreshLabels();
+            levelGrid?.RefreshGrid(chosenSpot);
         }
 
         // Event handler for overview button click
