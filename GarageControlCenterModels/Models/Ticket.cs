@@ -12,7 +12,6 @@ namespace GarageControlCenterBackend.Models
         public Garage GarageRef { get; private set; }
         [Browsable(false)]
         public int GarageId { get; private set; }
-
         public string TicketNumber { get; private set; }
         public DateTime EntranceTime { get; private set; }
         public bool IsPaid { get; private set; }

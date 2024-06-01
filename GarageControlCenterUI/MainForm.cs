@@ -30,34 +30,49 @@ namespace GarageControlCenterUI
 
         private void StartApp()
         {
-            using (SelectGarageDialog createGarageDialog = new SelectGarageDialog())
+            while (true)
             {
-                if (createGarageDialog.ShowDialog() == DialogResult.Yes)
+                using (SelectGarageDialog createGarageDialog = new SelectGarageDialog())
                 {
-                    GarageInfo info = ChooseNumberOfLevelsDialog();
-                    if (info.SelectedNumberOfLevels > 0)
-                    {
-                        EnterSpotsPerLevelForm enterSpotsForm = new EnterSpotsPerLevelForm(info.SelectedNumberOfLevels);
-                        enterSpotsForm.CreateGarageRequested += (s, spotsPerLevelList) => EnterSpotsForm_CreateGarageRequested(s, info.Name, spotsPerLevelList);
+                    DialogResult result = createGarageDialog.ShowDialog();
 
-                        if (enterSpotsForm.ShowDialog() == DialogResult.OK)
+                    if (result == DialogResult.Yes)
+                    {
+                        GarageInfo info = ChooseNumberOfLevelsDialog();
+                        if (info.SelectedNumberOfLevels > 0)
                         {
-                            MessageBox.Show("Garage created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            EnterSpotsPerLevelForm enterSpotsForm = new EnterSpotsPerLevelForm(info.SelectedNumberOfLevels);
+                            enterSpotsForm.CreateGarageRequested += (s, spotsPerLevelList) => EnterSpotsForm_CreateGarageRequested(s, info.Name, spotsPerLevelList);
+
+                            if (enterSpotsForm.ShowDialog() == DialogResult.OK)
+                            {
+                                MessageBox.Show("Garage created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                enterSpotsForm.Dispose();
+                                break;
+                            }
                         }
                     }
-                }
 
-                else
-                {
-                    using (GarageListDialog selectGarageDialog = new GarageListDialog(garageService))
+                    else if (result == DialogResult.No)
                     {
-                        if (selectGarageDialog.ShowDialog() == DialogResult.OK)
+                        using (GarageListDialog selectGarageDialog = new GarageListDialog(garageService))
                         {
-                            myGarage = selectGarageDialog.SelectedGarage;
+                            if (selectGarageDialog.ShowDialog() == DialogResult.OK)
+                            {
+                                myGarage = selectGarageDialog.SelectedGarage;
+                                selectGarageDialog.Dispose();
+                                break;
+                            }
                         }
                     }
-                }
 
+                    else
+                    {
+                        Application.Exit();
+                        Environment.Exit(0);
+                        return;
+                    }
+                }
             }
 
             ticketsForm = new TicketsForm(myGarage.Tickets);

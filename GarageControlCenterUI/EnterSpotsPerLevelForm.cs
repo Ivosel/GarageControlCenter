@@ -30,6 +30,9 @@
                 };
                 var textBox = new TextBox();
 
+                label.Anchor = AnchorStyles.None;
+                textBox.Anchor = AnchorStyles.None;
+
                 // Add label and textbox to the form
                 tableLayoutPanel.Controls.Add(label);
                 tableLayoutPanel.Controls.Add(textBox);
@@ -39,8 +42,10 @@
             // Set properties for the CreateGarageButton
             CreateGarageButton.Anchor = AnchorStyles.None;
             CreateGarageButton.TabIndex = 100;
+            CreateGarageButton.Margin = new Padding(0, 30, 0, 10);
             tableLayoutPanel.SetColumnSpan(CreateGarageButton, 2);
             tableLayoutPanel.Controls.Add(CreateGarageButton);
+            tableLayoutPanel.Padding = new Padding(20);
 
         }
 

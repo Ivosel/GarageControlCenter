@@ -49,6 +49,7 @@
             // 
             // CreateGarageButton
             // 
+            CreateGarageButton.DialogResult = DialogResult.OK;
             CreateGarageButton.Location = new Point(12, 56);
             CreateGarageButton.Name = "CreateGarageButton";
             CreateGarageButton.Size = new Size(114, 23);
@@ -66,6 +67,8 @@
             Controls.Add(CreateGarageButton);
             Controls.Add(tableLayoutPanel);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "EnterSpotsPerLevelForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "EnterSpotsPerLevelForm";
