@@ -61,22 +61,28 @@ namespace GarageControlCenterUI
             // 
             RegistrationTextBox.CharacterCasing = CharacterCasing.Upper;
             RegistrationTextBox.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            RegistrationTextBox.ForeColor = Color.LightGray;
             RegistrationTextBox.Location = new Point(128, 20);
             RegistrationTextBox.Name = "RegistrationTextBox";
             RegistrationTextBox.Size = new Size(203, 35);
             RegistrationTextBox.TabIndex = 0;
             RegistrationTextBox.Text = "REGISTRATION";
             RegistrationTextBox.TextAlign = HorizontalAlignment.Center;
+            RegistrationTextBox.Enter += RegistrationTextBox_Enter;
+            RegistrationTextBox.Leave += RegistrationTextBox_Leave;
             // 
             // TicketIdTextBox
             // 
             TicketIdTextBox.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            TicketIdTextBox.ForeColor = Color.LightGray;
             TicketIdTextBox.Location = new Point(128, 145);
             TicketIdTextBox.Name = "TicketIdTextBox";
             TicketIdTextBox.Size = new Size(203, 35);
             TicketIdTextBox.TabIndex = 2;
             TicketIdTextBox.Text = "Enter user ID";
             TicketIdTextBox.TextAlign = HorizontalAlignment.Center;
+            TicketIdTextBox.Enter += TicketIdTextBox_Enter;
+            TicketIdTextBox.Leave += TicketIdTextBox_Leave;
             // 
             // EntryDemonstration
             // 

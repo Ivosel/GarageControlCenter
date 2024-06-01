@@ -33,11 +33,19 @@ namespace GarageControlCenterUI
 
                 if (availableLevels.Count > 0)
                 {
-                    var ticket = Entrance.IssueTicket(RegistrationTextBox.Text);
-                    myGarage.Tickets.Add(ticket);
-                    await service.AddTicketAsync(ticket);
-                    UpdateParkingSpot(availableLevels);
-                    Entrance.OpenBarrier();
+                    string registration = RegistrationTextBox.Text;
+                    if (registration != "REGISTRATION" && registration != "")
+                    {
+                        var ticket = Entrance.IssueTicket(RegistrationTextBox.Text);
+                        myGarage.Tickets.Add(ticket);
+                        await service.AddTicketAsync(ticket);
+                        UpdateParkingSpot(availableLevels);
+                        Entrance.OpenBarrier();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter your vehicle's registration.");
+                    }
                 }
                 else
                 {
@@ -54,7 +62,7 @@ namespace GarageControlCenterUI
 
             finally
             {
-                RegistrationTextBox.Text = "Registration";
+                RegistrationTextBox.Clear();
                 Entrance.CloseBarrier();
             }
         }
@@ -102,6 +110,42 @@ namespace GarageControlCenterUI
             {
                 e.Cancel = true;
                 Hide();
+            }
+        }
+
+        private void RegistrationTextBox_Enter(object sender, EventArgs e)
+        {
+            if (RegistrationTextBox.Text == "REGISTRATION")
+            {
+                RegistrationTextBox.ForeColor = Color.Black;
+                RegistrationTextBox.Text = "";
+            }
+        }
+
+        private void RegistrationTextBox_Leave(object sender, EventArgs e)
+        {
+            if (RegistrationTextBox.Text.Length == 0)
+            {
+                RegistrationTextBox.ForeColor = Color.LightGray;
+                RegistrationTextBox.Text = "REGISTRATION";
+            }
+        }
+
+        private void TicketIdTextBox_Enter(object sender, EventArgs e)
+        {
+            if (TicketIdTextBox.Text == "Enter user ID")
+            {
+                TicketIdTextBox.ForeColor = Color.Black;
+                TicketIdTextBox.Text = "";
+            }
+        }
+
+        private void TicketIdTextBox_Leave(object sender, EventArgs e)
+        {
+            if (TicketIdTextBox.Text.Length == 0)
+            {
+                TicketIdTextBox.ForeColor = Color.LightGray;
+                TicketIdTextBox.Text = "Enter user ID";
             }
         }
     }

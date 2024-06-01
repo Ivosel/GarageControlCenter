@@ -52,6 +52,7 @@ namespace GarageControlCenterUI
             ticketNumberTextBox.Name = "ticketNumberTextBox";
             ticketNumberTextBox.Size = new Size(195, 33);
             ticketNumberTextBox.TabIndex = 2;
+            ticketNumberTextBox.TextAlign = HorizontalAlignment.Center;
             // 
             // label1
             // 
