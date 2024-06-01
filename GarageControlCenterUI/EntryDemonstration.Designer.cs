@@ -93,6 +93,8 @@ namespace GarageControlCenterUI
             Controls.Add(RegistrationTextBox);
             Controls.Add(InsertTicketButton);
             Controls.Add(TakeTicketButton);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "EntryDemonstration";
             Text = "Demonstration";
             TopMost = true;

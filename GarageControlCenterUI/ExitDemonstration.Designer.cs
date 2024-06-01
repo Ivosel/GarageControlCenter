@@ -72,6 +72,8 @@ namespace GarageControlCenterUI
             Controls.Add(label1);
             Controls.Add(ticketNumberTextBox);
             Controls.Add(InsertTicketButton);
+            MaximizeBox = false;
+            MinimizeBox = false;
             Name = "ExitDemonstration";
             Text = "Demonstration";
             TopMost = true;

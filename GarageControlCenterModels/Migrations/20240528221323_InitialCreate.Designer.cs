@@ -4,7 +4,6 @@ using GarageControlCenterBackend.DBContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,10 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageControlCenterBackend.Migrations
 {
     [DbContext(typeof(GarageDbContext))]
+<<<<<<< HEAD:GarageControlCenterModels/Migrations/GarageDbContextModelSnapshot.cs
+    partial class GarageDbContextModelSnapshot : ModelSnapshot
+=======
     [Migration("20240528221323_InitialCreate")]
     partial class InitialCreate
+>>>>>>> Assign a registration plate number to the ticket class:GarageControlCenterModels/Migrations/20240528221323_InitialCreate.Designer.cs
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

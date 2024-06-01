@@ -62,8 +62,13 @@ namespace GarageControlCenterUI
 
             finally
             {
-                RegistrationTextBox.Clear();
-                Entrance.CloseBarrier();
+                RegistrationTextBox.Text = "REGISTRATION";
+                RegistrationTextBox.ForeColor = Color.LightGray;
+
+                if (Entrance.IsOpen)
+                {
+                    Entrance.CloseBarrier();
+                }
             }
         }
 
