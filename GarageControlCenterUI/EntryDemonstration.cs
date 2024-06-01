@@ -91,6 +91,7 @@ namespace GarageControlCenterUI
 
         private void InsertTicketButton_Click(object sender, EventArgs e)
         {
+            
             //TODO Implement Insert ticket button for prepaid customers
         }
 
