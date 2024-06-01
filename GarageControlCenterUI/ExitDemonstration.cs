@@ -28,10 +28,22 @@ namespace GarageControlCenterUI
             try
             {
                 // Get the ticket number entered by the user
-                string ticketNumber = ticketNumberTextBox.Text;
+                int ticketNumber;
+
+                if (int.TryParse(ticketNumberTextBox.Text, out int ticketId))
+                {
+                    ticketNumber = ticketId;
+                }
+
+                else
+                {
+                    // Display a warning message if the input is invalid
+                    MessageBox.Show("Please enter a valid ticket number.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
                 // Search for a ticket with the entered ticket number
-                var ticket = myGarage.Tickets.FirstOrDefault(t => t.TicketNumber == ticketNumber);
+                var ticket = myGarage.Tickets.FirstOrDefault(t => t.Id == ticketNumber);
 
                 if (ticket != null)
                 {
@@ -52,7 +64,7 @@ namespace GarageControlCenterUI
                 }
                 else
                 {
-                    MessageBox.Show("Invalid ticket number. Please enter a valid ticket number.", "Invalid Ticket", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Ticket not found. Please enter a valid ticket number.", "Invalid Ticket", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)

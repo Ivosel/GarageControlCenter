@@ -33,7 +33,7 @@ namespace GarageControlCenterUI
 
                 if (availableLevels.Count > 0)
                 {
-                    var ticket = Entrance.IssueTicket();
+                    var ticket = Entrance.IssueTicket(RegistrationTextBox.Text);
                     myGarage.Tickets.Add(ticket);
                     await service.AddTicketAsync(ticket);
                     UpdateParkingSpot(availableLevels);
@@ -54,6 +54,7 @@ namespace GarageControlCenterUI
 
             finally
             {
+                RegistrationTextBox.Text = "Registration";
                 Entrance.CloseBarrier();
             }
         }

@@ -1,14 +1,22 @@
-﻿namespace GarageControlCenterBackend.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GarageControlCenterBackend.Models
 {
     public class GarageUser
     {
+        [Key]
         public int Id { get; private set; }
         public Garage GarageRef { get; private set; }
         public int GarageId { get; private set; }
+        [Required]
         public string LastName { get; private set; }
+        [Required]
         public string FirstName { get; private set; }
+        [Phone]
         public string PhoneNumber { get; private set; }
+        [EmailAddress]
         public string Email { get; private set; }
+        [Required]
         public string RegistrationPlate { get; private set; }
         public UserTicket UserTicket { get; private set; }
 

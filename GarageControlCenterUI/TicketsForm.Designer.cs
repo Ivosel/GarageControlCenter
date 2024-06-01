@@ -41,14 +41,14 @@
             ticketGrid.Location = new Point(0, 0);
             ticketGrid.Name = "ticketGrid";
             ticketGrid.RowTemplate.Height = 25;
-            ticketGrid.Size = new Size(341, 438);
+            ticketGrid.Size = new Size(444, 438);
             ticketGrid.TabIndex = 0;
             // 
             // TicketsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(341, 438);
+            ClientSize = new Size(444, 438);
             Controls.Add(ticketGrid);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;

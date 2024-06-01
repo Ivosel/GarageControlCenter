@@ -85,8 +85,21 @@ namespace GarageControlCenterUI.Controls
         // Event handler for the insert ticket button click event
         private void InsertTicketButton_Click(object sender, EventArgs e)
         {
-            string ticketNumber = ticketNumberTextBox.Text;
-            Ticket ticket = MainForm.myGarage.Tickets.FirstOrDefault(t => t.TicketNumber == ticketNumber);
+            int ticketNumber;
+
+            if (int.TryParse(ticketNumberTextBox.Text, out int ticketId))
+            {
+                ticketNumber = ticketId;
+            }
+
+            else
+            {
+                // Display a warning message if the input is invalid
+                MessageBox.Show("Please enter a valid ticket number.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            Ticket ticket = MainForm.myGarage.Tickets.FirstOrDefault(t => t.Id == ticketNumber);
 
             // Check if the ticket exists
             if (ticket != null)

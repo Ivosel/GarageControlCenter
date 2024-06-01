@@ -1,15 +1,20 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 
 namespace GarageControlCenterBackend.Models
 {
     public class UserTicket
     {
+        [Key]
         public int Id { get; private set; }
         public int UserId { get; private set; }
         public GarageUser UserRef { get; set; }
+        [Required]
         public DateTime ValidFrom { get; private set; }
+        [Required]
         public DateTime ValidUntil { get; private set; }
         public TicketState State { get; private set; }
+        [Required]
         public TicketType Type { get; private set; }
         public bool isBlocked { get; private set; }
 

@@ -1,8 +1,12 @@
-﻿namespace GarageControlCenterBackend.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GarageControlCenterBackend.Models
 {
     public class Garage
     {
+        [Key]
         public int Id { get; private set; }
+        [Required]
         public string Name { get; private set; }
         public List<Level> Levels { get; private set; }
         public int TotalCapacity { get; private set; }

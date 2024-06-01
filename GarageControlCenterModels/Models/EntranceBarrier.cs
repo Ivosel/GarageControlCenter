@@ -3,9 +3,9 @@
     public class EntranceBarrier : Barrier
     {
         Ticket Ticket;
-        public Ticket IssueTicket()
+        public Ticket IssueTicket(string registrationPlate)
         {
-            Ticket = new Ticket();
+            Ticket = new Ticket(registrationPlate);
             return Ticket;
         }
 
