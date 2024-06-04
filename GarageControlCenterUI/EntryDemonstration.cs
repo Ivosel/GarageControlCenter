@@ -9,22 +9,27 @@ namespace GarageControlCenterUI
     public partial class EntryDemonstration : Form
     {
         private readonly Garage myGarage;
-        private readonly GarageService service;
+        private readonly GarageService garageService;
+        private readonly UserService userService;
         private readonly Random random;
         EntranceBarrier Entrance { get; }
 
-        public event EventHandler<CustomerEntryEventArgs> CustomerEntry;
+        public event Func<object, CustomerEntryEventArgs, Task> CustomerEntry;
 
-        public EntryDemonstration(Garage garage, GarageService garageService)
+        public EntryDemonstration(Garage garage, GarageService GarageService, UserService UserService)
         {
+            InitializeComponent();
+            TakeTicketButton.Click += async (sender, e) => await TakeTicketButton_Click(sender, e);
+            InsertTicketButton.Click += async (sender, e) => await InsertTicketButton_Click(sender, e);
+            
             myGarage = garage;
-            service = garageService;
+            garageService = GarageService;
+            userService = UserService;
             random = new Random();
             Entrance = new EntranceBarrier();
-            InitializeComponent();
         }
 
-        private async void TakeTicketButton_Click(object sender, EventArgs e)
+        private async Task TakeTicketButton_Click(object sender, EventArgs e)
         {
             try
             {
@@ -38,8 +43,8 @@ namespace GarageControlCenterUI
                     {
                         var ticket = Entrance.IssueTicket(RegistrationTextBox.Text);
                         myGarage.Tickets.Add(ticket);
-                        await service.AddTicketAsync(ticket);
-                        UpdateParkingSpot(availableLevels);
+                        await garageService.AddTicketAsync(ticket);
+                        await UpdateParkingSpot(availableLevels);
                         Entrance.OpenBarrier();
                     }
                     else
@@ -72,7 +77,7 @@ namespace GarageControlCenterUI
             }
         }
 
-        private void UpdateParkingSpot(List<Level> availableLevels)
+        private async Task UpdateParkingSpot(List<Level> availableLevels)
         {
             // Randomly select a level from the available levels
             int randomLevelIndex = random.Next(availableLevels.Count);
@@ -86,13 +91,77 @@ namespace GarageControlCenterUI
             var chosenSpot = availableSpots[randomSpotIndex];
             chosenSpot.ReserveSpot();
 
-            CustomerEntry?.Invoke(this, new CustomerEntryEventArgs(chosenSpot));
+            await CustomerEntry?.Invoke(this, new CustomerEntryEventArgs(chosenSpot));
         }
 
-        private void InsertTicketButton_Click(object sender, EventArgs e)
+        private async Task InsertTicketButton_Click(object sender, EventArgs e)
         {
-            
-            //TODO Implement Insert ticket button for prepaid customers
+            try
+            {
+                // Read the user ID from the UserIdTextBox
+                int userId = int.Parse(UserIdTextBox.Text);
+
+                // Find the user with this ID in the myGarage.Users list
+                var user = myGarage.Users.FirstOrDefault(u => u.Id == userId);
+
+                if (user != null)
+                {
+                    if (user.UserTicket == null)
+                    {
+                        MessageBox.Show("User does not have a ticket.");
+                        return;
+                    }
+
+                    if (!user.UserTicket.IsValid())
+                    {
+                        MessageBox.Show("Ticket expired!");
+                        return;
+                    }
+
+                    if (user.UserTicket.State == TicketState.Inside)
+                    {
+                        MessageBox.Show("User already inside the garage.");
+                        return;
+                    }
+
+                    // Find levels with available spots
+                    var availableLevels = myGarage.Levels.Where(level => level.FreeSpots() > 0).ToList();
+
+                    if (availableLevels.Count > 0)
+                    {
+                        Entrance.OpenBarrier();
+                        await UpdateParkingSpot(availableLevels);
+                        user.UserTicket.SetInside();
+                        await userService.UpdateUserAsync(user);
+                    }
+                    else
+                    {
+                        // Handle case where all levels are full
+                        MessageBox.Show("No available spots in the garage.");
+                    }
+                }
+
+                else
+                {
+                    MessageBox.Show("Invalid user ID.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                UserIdTextBox.Text = "Enter user ID";
+                UserIdTextBox.ForeColor = Color.LightGray;
+
+                if (Entrance.IsOpen)
+                {
+                    Entrance.CloseBarrier();
+                }
+            }
         }
 
         public class CustomerEntryEventArgs : EventArgs
@@ -105,7 +174,7 @@ namespace GarageControlCenterUI
             }
         }
 
-        public void SubscribeToCustomerEntryEvent(EventHandler<CustomerEntryEventArgs> handler)
+        public void SubscribeToCustomerEntryEvent(Func<object, CustomerEntryEventArgs, Task> handler)
         {
             CustomerEntry += handler;
         }
@@ -139,19 +208,19 @@ namespace GarageControlCenterUI
 
         private void TicketIdTextBox_Enter(object sender, EventArgs e)
         {
-            if (TicketIdTextBox.Text == "Enter user ID")
+            if (UserIdTextBox.Text == "Enter user ID")
             {
-                TicketIdTextBox.ForeColor = Color.Black;
-                TicketIdTextBox.Text = "";
+                UserIdTextBox.ForeColor = Color.Black;
+                UserIdTextBox.Text = "";
             }
         }
 
         private void TicketIdTextBox_Leave(object sender, EventArgs e)
         {
-            if (TicketIdTextBox.Text.Length == 0)
+            if (UserIdTextBox.Text.Length == 0)
             {
-                TicketIdTextBox.ForeColor = Color.LightGray;
-                TicketIdTextBox.Text = "Enter user ID";
+                UserIdTextBox.ForeColor = Color.LightGray;
+                UserIdTextBox.Text = "Enter user ID";
             }
         }
     }

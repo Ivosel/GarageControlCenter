@@ -2,6 +2,9 @@
 using GarageControlCenterBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace GarageControlCenterBackend.Services
 {
@@ -35,8 +38,11 @@ namespace GarageControlCenterBackend.Services
         {
             try
             {
-                var existingUser = await _context.Users.Include(u => u.UserTicket)
-                                                       .FirstOrDefaultAsync(u => u.Id == updatedUser.Id);
+                var existingUser = await _context.Users
+                    .Include(u => u.UserTicket)
+                    .ThenInclude(ut=>ut.TicketEvents)
+                    .FirstOrDefaultAsync(u => u.Id == updatedUser.Id);
+
                 if (existingUser != null)
                 {
                     existingUser.UpdateUser(
@@ -53,6 +59,7 @@ namespace GarageControlCenterBackend.Services
                     }
 
                     await _context.SaveChangesAsync();
+                    _logger.LogInformation($"User {existingUser.Id} updated successfully with ticket {existingUser.UserTicket?.Id}");
                 }
 
                 else
@@ -111,6 +118,44 @@ namespace GarageControlCenterBackend.Services
             if (updatedTicket.GetNeutralInfo())
             {
                 existingTicket.SetToNeutral();
+            }
+        }
+
+        public static void ValidateUser(GarageUser user)
+        {
+            if (string.IsNullOrWhiteSpace(user.FirstName))
+            {
+                throw new ArgumentException("First name is required");
+            }
+
+            if (user.FirstName.Length > 50)
+            {
+                throw new ArgumentException("First name cannot exceed 50 characters");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.LastName))
+            {
+                throw new ArgumentException("Last name is required");
+            }
+
+            if (user.LastName.Length > 50)
+            {
+                throw new ArgumentException("Last name cannot exceed 50 characters");
+            }
+
+            if (!string.IsNullOrEmpty(user.PhoneNumber) && !Regex.IsMatch(user.PhoneNumber, @"^\d{10}$"))
+            {
+                throw new ArgumentException("Invalid phone number");
+            }
+
+            if (!string.IsNullOrEmpty(user.Email) && !new EmailAddressAttribute().IsValid(user.Email))
+            {
+                throw new ArgumentException("Invalid email address");
+            }
+
+            if (string.IsNullOrWhiteSpace(user.RegistrationPlate))
+            {
+                throw new ArgumentException("Registration plate is required");
             }
         }
     }

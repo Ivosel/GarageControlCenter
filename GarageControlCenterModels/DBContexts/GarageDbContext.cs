@@ -11,6 +11,7 @@ namespace GarageControlCenterBackend.DBContexts
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<GarageUser> Users { get; set; }
         public DbSet<UserTicket> UserTickets { get; set; }
+        public DbSet<TicketEvent> TicketEvents { get; set; }
 
         public GarageDbContext(DbContextOptions<GarageDbContext> options) : base(options)
         {
@@ -57,6 +58,11 @@ namespace GarageControlCenterBackend.DBContexts
                 .HasOne(u => u.UserTicket)
                 .WithOne(ut => ut.UserRef)
                 .HasForeignKey<UserTicket>(ut => ut.UserId);
+
+            modelBuilder.Entity<UserTicket>()
+                .HasMany(e => e.TicketEvents)
+                .WithOne(ut => ut.UserTicketRef)
+                .HasForeignKey(te => te.UserTicketId);
         }
     }
 }

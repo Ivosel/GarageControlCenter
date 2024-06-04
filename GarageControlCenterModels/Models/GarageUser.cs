@@ -21,13 +21,14 @@ namespace GarageControlCenterBackend.Models
         public UserTicket UserTicket { get; private set; }
 
         private GarageUser() { }
-        public GarageUser(string lastName, string firstName, string phoneNumber, string email, string registrationPlate)
+        public GarageUser(string lastName, string firstName, string phoneNumber, string email, string registrationPlate, int garageId)
         {
             LastName = lastName;
             FirstName = firstName;
             PhoneNumber = phoneNumber;
             Email = email;
             RegistrationPlate = registrationPlate;
+            GarageId = garageId;
         }
 
         public void UpdateUser(string lastName, string firstName, string phoneNumber, string email, string registrationPlate)
@@ -46,7 +47,7 @@ namespace GarageControlCenterBackend.Models
 
         public override string ToString()
         {
-            return $"{FirstName} {LastName}";
+            return $"{LastName} {FirstName}";
         }
 
         public void AssignTicket(UserTicket ticket)

@@ -17,6 +17,8 @@ namespace GarageControlCenterBackend.Models
         [Required]
         public TicketType Type { get; private set; }
         public bool isBlocked { get; private set; }
+        public List<TicketEvent> TicketEvents { get; private set; }
+
 
         private UserTicket() { }
 
@@ -27,6 +29,7 @@ namespace GarageControlCenterBackend.Models
             Type = type;
             isBlocked = false;
             State = TicketState.Neutral;
+            TicketEvents = new List<TicketEvent>();
         }
 
         public void ExtendTicket(DateTime extendUntil)
@@ -62,6 +65,23 @@ namespace GarageControlCenterBackend.Models
         public bool GetNeutralInfo()
         {
             return State == TicketState.Neutral;
+        }
+
+        public void SetInside()
+        {
+            State = TicketState.Inside;
+            TicketEvents.Add(new TicketEvent(DateTime.Now, TicketEventType.Entrance));
+        }
+
+        public void SetOutside()
+        {
+            State = TicketState.Outside;
+            TicketEvents.Add(new TicketEvent(DateTime.Now, TicketEventType.Exit));
+        }
+
+        public bool IsValid()
+        {
+            return ValidUntil.Date >= DateTime.Now.Date;
         }
     }
 

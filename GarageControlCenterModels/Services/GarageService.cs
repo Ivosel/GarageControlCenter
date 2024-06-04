@@ -26,6 +26,8 @@ namespace GarageControlCenterBackend.Services
                                              .Include(g => g.Tickets)
                                              .Include(g => g.Users)
                                              .ThenInclude(u => u.UserTicket)
+                                             .ThenInclude(ut=> ut.TicketEvents)
+                                             .AsSplitQuery()
                                              .ToListAsync();
             }
 

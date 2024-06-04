@@ -8,10 +8,5 @@
             Ticket = new Ticket(registrationPlate);
             return Ticket;
         }
-
-        public bool ReadTicket(Ticket ticket)
-        {
-            return ticket.IsPaid ? true : false;
-        }
     }
 }

@@ -32,7 +32,7 @@ namespace GarageControlCenterUI
             TakeTicketButton = new Button();
             InsertTicketButton = new Button();
             RegistrationTextBox = new TextBox();
-            TicketIdTextBox = new TextBox();
+            UserIdTextBox = new TextBox();
             SuspendLayout();
             // 
             // TakeTicketButton
@@ -41,10 +41,9 @@ namespace GarageControlCenterUI
             TakeTicketButton.Location = new Point(128, 61);
             TakeTicketButton.Name = "TakeTicketButton";
             TakeTicketButton.Size = new Size(203, 56);
-            TakeTicketButton.TabIndex = 1;
+            TakeTicketButton.TabIndex = 3;
             TakeTicketButton.Text = "Take Ticket";
             TakeTicketButton.UseVisualStyleBackColor = true;
-            TakeTicketButton.Click += TakeTicketButton_Click;
             // 
             // InsertTicketButton
             // 
@@ -52,10 +51,9 @@ namespace GarageControlCenterUI
             InsertTicketButton.Location = new Point(128, 186);
             InsertTicketButton.Name = "InsertTicketButton";
             InsertTicketButton.Size = new Size(203, 56);
-            InsertTicketButton.TabIndex = 3;
+            InsertTicketButton.TabIndex = 1;
             InsertTicketButton.Text = "Insert Ticket";
             InsertTicketButton.UseVisualStyleBackColor = true;
-            InsertTicketButton.Click += InsertTicketButton_Click;
             // 
             // RegistrationTextBox
             // 
@@ -65,34 +63,35 @@ namespace GarageControlCenterUI
             RegistrationTextBox.Location = new Point(128, 20);
             RegistrationTextBox.Name = "RegistrationTextBox";
             RegistrationTextBox.Size = new Size(203, 35);
-            RegistrationTextBox.TabIndex = 0;
+            RegistrationTextBox.TabIndex = 2;
             RegistrationTextBox.Text = "REGISTRATION";
             RegistrationTextBox.TextAlign = HorizontalAlignment.Center;
             RegistrationTextBox.Enter += RegistrationTextBox_Enter;
             RegistrationTextBox.Leave += RegistrationTextBox_Leave;
             // 
-            // TicketIdTextBox
+            // UserIdTextBox
             // 
-            TicketIdTextBox.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
-            TicketIdTextBox.ForeColor = Color.LightGray;
-            TicketIdTextBox.Location = new Point(128, 145);
-            TicketIdTextBox.Name = "TicketIdTextBox";
-            TicketIdTextBox.Size = new Size(203, 35);
-            TicketIdTextBox.TabIndex = 2;
-            TicketIdTextBox.Text = "Enter user ID";
-            TicketIdTextBox.TextAlign = HorizontalAlignment.Center;
-            TicketIdTextBox.Enter += TicketIdTextBox_Enter;
-            TicketIdTextBox.Leave += TicketIdTextBox_Leave;
+            UserIdTextBox.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
+            UserIdTextBox.ForeColor = Color.LightGray;
+            UserIdTextBox.Location = new Point(128, 145);
+            UserIdTextBox.Name = "UserIdTextBox";
+            UserIdTextBox.Size = new Size(203, 35);
+            UserIdTextBox.TabIndex = 4;
+            UserIdTextBox.Text = "Enter user ID";
+            UserIdTextBox.TextAlign = HorizontalAlignment.Center;
+            UserIdTextBox.Enter += TicketIdTextBox_Enter;
+            UserIdTextBox.Leave += TicketIdTextBox_Leave;
             // 
             // EntryDemonstration
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(472, 254);
-            Controls.Add(TicketIdTextBox);
+            Controls.Add(UserIdTextBox);
             Controls.Add(RegistrationTextBox);
             Controls.Add(InsertTicketButton);
             Controls.Add(TakeTicketButton);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "EntryDemonstration";
@@ -108,6 +107,6 @@ namespace GarageControlCenterUI
         private Button TakeTicketButton;
         private Button InsertTicketButton;
         private TextBox RegistrationTextBox;
-        private TextBox TicketIdTextBox;
+        private TextBox UserIdTextBox;
     }
 }

@@ -32,57 +32,71 @@ namespace GarageControlCenterUI
         {
             while (true)
             {
-                using (SelectGarageDialog createGarageDialog = new SelectGarageDialog())
+                if (TryCreateOrSelectGarage())
                 {
-                    DialogResult result = createGarageDialog.ShowDialog();
-
-                    if (result == DialogResult.Yes)
-                    {
-                        GarageInfo info = ChooseNumberOfLevelsDialog();
-                        if (info.SelectedNumberOfLevels > 0)
-                        {
-                            EnterSpotsPerLevelForm enterSpotsForm = new EnterSpotsPerLevelForm(info.SelectedNumberOfLevels);
-                            enterSpotsForm.CreateGarageRequested += (s, spotsPerLevelList) => EnterSpotsForm_CreateGarageRequested(s, info.Name, spotsPerLevelList);
-
-                            if (enterSpotsForm.ShowDialog() == DialogResult.OK)
-                            {
-                                MessageBox.Show("Garage created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                enterSpotsForm.Dispose();
-                                break;
-                            }
-                        }
-                    }
-
-                    else if (result == DialogResult.No)
-                    {
-                        using (GarageListDialog selectGarageDialog = new GarageListDialog(garageService))
-                        {
-                            if (selectGarageDialog.ShowDialog() == DialogResult.OK)
-                            {
-                                myGarage = selectGarageDialog.SelectedGarage;
-                                selectGarageDialog.Dispose();
-                                break;
-                            }
-                        }
-                    }
-
-                    else
-                    {
-                        Application.Exit();
-                        Environment.Exit(0);
-                        return;
-                    }
+                    break;
                 }
             }
 
-            ticketsForm = new TicketsForm(myGarage.Tickets);
-            usersForm = new UsersForm(myGarage.Users, userService);
-
-            entryDemo = new EntryDemonstration(myGarage, garageService);
-            exitDemo = new ExitDemonstration(myGarage, garageService);
-
+            InitializeForms();
             SubscribeToEvents();
+            InitializeControls();
+        }
 
+        private bool TryCreateOrSelectGarage()
+        {
+            using (SelectGarageDialog createGarageDialog = new SelectGarageDialog())
+            {
+                DialogResult result = createGarageDialog.ShowDialog();
+
+                if (result == DialogResult.Yes)
+                {
+                    GarageInfo info = ChooseNumberOfLevelsDialog();
+                    if (info.SelectedNumberOfLevels > 0)
+                    {
+                        EnterSpotsPerLevelForm enterSpotsForm = new EnterSpotsPerLevelForm(info.SelectedNumberOfLevels);
+                        enterSpotsForm.CreateGarageRequested += (s, spotsPerLevelList) => EnterSpotsForm_CreateGarageRequested(s, info.Name, spotsPerLevelList);
+
+                        if (enterSpotsForm.ShowDialog() == DialogResult.OK)
+                        {
+                            MessageBox.Show("Garage created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            enterSpotsForm.Dispose();
+                            return true;
+                        }
+                    }
+                }
+                else if (result == DialogResult.No)
+                {
+                    using (GarageListDialog selectGarageDialog = new GarageListDialog(garageService))
+                    {
+                        if (selectGarageDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            myGarage = selectGarageDialog.SelectedGarage;
+                            selectGarageDialog.Dispose();
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    Application.Exit();
+                    Environment.Exit(0);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        private void InitializeForms()
+        {
+            ticketsForm = new TicketsForm(myGarage.Tickets);
+            usersForm = new UsersForm(myGarage, userService);
+            entryDemo = new EntryDemonstration(myGarage, garageService, userService);
+            exitDemo = new ExitDemonstration(myGarage, garageService, userService);
+        }
+
+        private void InitializeControls()
+        {
             levelGrids = new List<LevelGrid>();
             levelButtons = new List<LevelButton>();
 
@@ -107,7 +121,7 @@ namespace GarageControlCenterUI
 
             InitializeOverviewButton();
             InitializeLevelButtons();
-            OverviewButton_Click(this, EventArgs.Empty); // Show the overview (HOME) on the main form
+            OverviewButton_Click(this, EventArgs.Empty);
         }
 
         private void SubscribeToEvents()
@@ -227,14 +241,14 @@ namespace GarageControlCenterUI
         {
             ticketsForm.Show();
         }
-        private async void HandleCustomerExit(object? sender, ExitDemonstration.CustomerExitEventArgs e)
+        private async Task HandleCustomerExit(object? sender, ExitDemonstration.CustomerExitEventArgs e)
         {
             ticketsForm.RefreshTickets();
             await garageService.ReleaseParkingSpotAsync(e.ChosenSpot);
             UpdateUI(e.ChosenSpot);
         }
 
-        private async void HandleCustomerEntry(object? sender, EntryDemonstration.CustomerEntryEventArgs e)
+        private async Task HandleCustomerEntry(object? sender, EntryDemonstration.CustomerEntryEventArgs e)
         {
             ticketsForm.RefreshTickets();
             await garageService.OccupyParkingSpotAsync(e.ChosenSpot);

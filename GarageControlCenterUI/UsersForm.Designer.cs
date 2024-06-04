@@ -35,7 +35,9 @@
             emailTextBox = new TextBox();
             ticketHistoryTabControl = new TabControl();
             ticketTabPage = new TabPage();
-            validUntilTextBox = new MaskedTextBox();
+            TicketStateLabel = new Label();
+            TicketLocationLabel = new Label();
+            validUntilTextBox = new DateTimePicker();
             validFromTextBox = new MaskedTextBox();
             ticketNumberLabel = new Label();
             ticketNumberTextBox = new TextBox();
@@ -47,6 +49,10 @@
             validUntilLabel = new Label();
             validFromLabel = new Label();
             historyTabPage = new TabPage();
+            ticketEventsGrid = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
             usersLabel = new Label();
             lastNameLabel = new Label();
             firstNameLabel = new Label();
@@ -62,6 +68,8 @@
             newUserButton = new Button();
             ticketHistoryTabControl.SuspendLayout();
             ticketTabPage.SuspendLayout();
+            historyTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ticketEventsGrid).BeginInit();
             SuspendLayout();
             // 
             // usersListBox
@@ -115,6 +123,8 @@
             // 
             // ticketTabPage
             // 
+            ticketTabPage.Controls.Add(TicketStateLabel);
+            ticketTabPage.Controls.Add(TicketLocationLabel);
             ticketTabPage.Controls.Add(validUntilTextBox);
             ticketTabPage.Controls.Add(validFromTextBox);
             ticketTabPage.Controls.Add(ticketNumberLabel);
@@ -133,13 +143,32 @@
             ticketTabPage.TabIndex = 0;
             ticketTabPage.Text = "Ticket";
             // 
+            // TicketStateLabel
+            // 
+            TicketStateLabel.AutoSize = true;
+            TicketStateLabel.Location = new Point(112, 128);
+            TicketStateLabel.Name = "TicketStateLabel";
+            TicketStateLabel.Size = new Size(38, 15);
+            TicketStateLabel.TabIndex = 15;
+            TicketStateLabel.Text = "label1";
+            // 
+            // TicketLocationLabel
+            // 
+            TicketLocationLabel.AutoSize = true;
+            TicketLocationLabel.Location = new Point(19, 128);
+            TicketLocationLabel.Name = "TicketLocationLabel";
+            TicketLocationLabel.Size = new Size(87, 15);
+            TicketLocationLabel.TabIndex = 14;
+            TicketLocationLabel.Text = "Ticket location:";
+            // 
             // validUntilTextBox
             // 
+            validUntilTextBox.CustomFormat = "dd.MM.yy.";
+            validUntilTextBox.Format = DateTimePickerFormat.Custom;
             validUntilTextBox.Location = new Point(447, 25);
-            validUntilTextBox.Mask = "00,00,00,";
             validUntilTextBox.Name = "validUntilTextBox";
             validUntilTextBox.Size = new Size(119, 23);
-            validUntilTextBox.TabIndex = 5;
+            validUntilTextBox.TabIndex = 13;
             // 
             // validFromTextBox
             // 
@@ -153,7 +182,7 @@
             // ticketNumberLabel
             // 
             ticketNumberLabel.AutoSize = true;
-            ticketNumberLabel.Location = new Point(22, 59);
+            ticketNumberLabel.Location = new Point(19, 59);
             ticketNumberLabel.Name = "ticketNumberLabel";
             ticketNumberLabel.Size = new Size(83, 15);
             ticketNumberLabel.TabIndex = 10;
@@ -161,7 +190,7 @@
             // 
             // ticketNumberTextBox
             // 
-            ticketNumberTextBox.Location = new Point(22, 77);
+            ticketNumberTextBox.Location = new Point(19, 75);
             ticketNumberTextBox.Name = "ticketNumberTextBox";
             ticketNumberTextBox.ReadOnly = true;
             ticketNumberTextBox.Size = new Size(201, 23);
@@ -235,12 +264,46 @@
             // 
             // historyTabPage
             // 
+            historyTabPage.Controls.Add(ticketEventsGrid);
             historyTabPage.Location = new Point(4, 24);
             historyTabPage.Name = "historyTabPage";
             historyTabPage.Padding = new Padding(3);
             historyTabPage.Size = new Size(572, 209);
             historyTabPage.TabIndex = 1;
             historyTabPage.Text = "History";
+            // 
+            // ticketEventsGrid
+            // 
+            ticketEventsGrid.AllowUserToDeleteRows = false;
+            ticketEventsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            ticketEventsGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            ticketEventsGrid.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3 });
+            ticketEventsGrid.Dock = DockStyle.Fill;
+            ticketEventsGrid.Location = new Point(3, 3);
+            ticketEventsGrid.Name = "ticketEventsGrid";
+            ticketEventsGrid.ReadOnly = true;
+            ticketEventsGrid.RowHeadersVisible = false;
+            ticketEventsGrid.RowTemplate.Height = 25;
+            ticketEventsGrid.Size = new Size(566, 203);
+            ticketEventsGrid.TabIndex = 0;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.HeaderText = "Event";
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.HeaderText = "Date";
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            dataGridViewTextBoxColumn3.HeaderText = "Time";
+            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            dataGridViewTextBoxColumn3.ReadOnly = true;
             // 
             // usersLabel
             // 
@@ -297,6 +360,7 @@
             // 
             // registrationPlateTextBox
             // 
+            registrationPlateTextBox.CharacterCasing = CharacterCasing.Upper;
             registrationPlateTextBox.Location = new Point(506, 139);
             registrationPlateTextBox.Name = "registrationPlateTextBox";
             registrationPlateTextBox.Size = new Size(263, 23);
@@ -391,6 +455,8 @@
             ticketHistoryTabControl.ResumeLayout(false);
             ticketTabPage.ResumeLayout(false);
             ticketTabPage.PerformLayout();
+            historyTabPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ticketEventsGrid).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -427,7 +493,13 @@
         private TextBox ticketNumberTextBox;
         private Label ticketNumberLabel;
         private Button newUserButton;
-        private MaskedTextBox validUntilTextBox;
         private MaskedTextBox validFromTextBox;
+        private DateTimePicker validUntilTextBox;
+        private Label TicketStateLabel;
+        private Label TicketLocationLabel;
+        private DataGridView ticketEventsGrid;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
     }
 }

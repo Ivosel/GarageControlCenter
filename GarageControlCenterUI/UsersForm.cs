@@ -6,26 +6,25 @@ namespace GarageControlCenterUI
 {
     public partial class UsersForm : Form
     {
-        private readonly List<GarageUser> users;
+        private readonly Garage myGarage;
         private bool newTicketFlag;
         private readonly BindingList<GarageUser> bindingUserList;
         private readonly BindingSource userBindingSource;
         private readonly UserService userService;
 
-        public UsersForm(List<GarageUser> garageUsers, UserService service)
+        public UsersForm(Garage garage, UserService service)
         {
-            users = garageUsers;
-            userService = service;
             InitializeComponent();
+            myGarage = garage;
+            userService = service;
             ClearTicketControls();
             ClearUserControls();
 
-            bindingUserList = new BindingList<GarageUser>(users);
+            bindingUserList = new BindingList<GarageUser>(myGarage.Users);
             userBindingSource = new BindingSource(bindingUserList, null);
             usersListBox.DataSource = userBindingSource;
             SortUsersAlphabetically();
         }
-
 
         private void ClearUserControls()
         {
@@ -62,8 +61,13 @@ namespace GarageControlCenterUI
                     case Label label:
                         label.Visible = false;
                         break;
+                    case DateTimePicker dateTimePicker:
+                        dateTimePicker.Visible = false;
+                        break;
                 }
             }
+
+            ticketEventsGrid.Rows.Clear();
         }
 
         private void ShowTicketControls()
@@ -72,36 +76,56 @@ namespace GarageControlCenterUI
             {
                 ctrl.Visible = true;
             }
+
         }
 
         private async void saveChangesButton_Click(object sender, EventArgs e)
         {
             try
             {
-                var existingUser = users.FirstOrDefault(u => u.Id.ToString() == userIdTextBox.Text);
+                var existingUser = myGarage.Users.FirstOrDefault(u => u.Id.ToString() == userIdTextBox.Text);
 
                 if (existingUser != null)
                 {
+                    UserService.ValidateUser(new GarageUser(
+                        lastNameTextBox.Text,
+                        firstNameTextBox.Text,
+                        phoneNumberTextBox.Text,
+                        emailTextBox.Text,
+                        registrationPlateTextBox.Text,
+                        myGarage.Id));
+
                     UpdateExistingUser(existingUser);
                     await userService.UpdateUserAsync(existingUser); // Update user in the database
                     if (existingUser.UserTicket != null)
                     {
                         ticketNumberTextBox.Text = existingUser.UserTicket.Id.ToString();
+                        TicketStateLabel.Text = existingUser.UserTicket.State.ToString();
                     }
                 }
 
                 else
                 {
                     var newUser = CreateUser();
+                    UserService.ValidateUser(newUser);
+                    myGarage.Users.Add(newUser);
                     await userService.AddUserAsync(newUser); // Add new user to the database
                     userIdTextBox.Text = newUser.Id.ToString();
+
                     if (newUser.UserTicket != null)
                     {
                         ticketNumberTextBox.Text = newUser.UserTicket.Id.ToString();
+                        TicketStateLabel.Text = existingUser.UserTicket.State.ToString();
                     }
+                    bindingUserList.ResetBindings();
                 }
 
                 SortUsersAlphabetically();
+            }
+
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show($"Validation error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             catch (Exception ex)
@@ -121,10 +145,13 @@ namespace GarageControlCenterUI
 
             if (newTicketFlag)
             {
-                existingUser.AssignTicket(CreateTicket());
+                var newTicket = CreateTicket();
+                existingUser.AssignTicket(newTicket);
                 ticketNumberTextBox.Text = existingUser.UserTicket.Id.ToString();
+                TicketStateLabel.Text = existingUser.UserTicket.State.ToString();
                 newTicketFlag = false;
             }
+
             else if (existingUser.UserTicket != null)
             {
                 HandleTicketUpdates(existingUser);
@@ -141,7 +168,7 @@ namespace GarageControlCenterUI
 
             else
             {
-                var extendDate = DateTime.ParseExact(validUntilTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
+                var extendDate = validUntilTextBox.Value;
                 existingUser.UserTicket.ExtendTicket(extendDate);
 
                 var type = ticketTypeComboBox.SelectedIndex switch
@@ -178,15 +205,14 @@ namespace GarageControlCenterUI
                 firstNameTextBox.Text,
                 phoneNumberTextBox.Text,
                 emailTextBox.Text,
-                registrationPlateTextBox.Text);
+                registrationPlateTextBox.Text,
+                myGarage.Id);
 
             if (newTicketFlag)
             {
                 createdUser.AssignTicket(CreateTicket());
                 newTicketFlag = false;
             }
-            users.Add(createdUser);
-            SortUsersAlphabetically();
 
             return createdUser;
         }
@@ -194,7 +220,7 @@ namespace GarageControlCenterUI
         private UserTicket CreateTicket()
         {
             var from = DateTime.ParseExact(validFromTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
-            var until = DateTime.ParseExact(validUntilTextBox.Text, "dd.MM.yy.", System.Globalization.CultureInfo.InvariantCulture);
+            var until = validUntilTextBox.Value;
             var type = ticketTypeComboBox.SelectedIndex switch
             {
                 0 => TicketType.WholeDay,
@@ -226,6 +252,16 @@ namespace GarageControlCenterUI
             if (selectedUser.UserTicket != null)
             {
                 PopulateTicketControls(selectedUser.UserTicket);
+                // Clear the DataGridView
+                ticketEventsGrid.Rows.Clear();
+
+                var sortedTicketEvents = selectedUser.UserTicket.TicketEvents.OrderByDescending(te => te.TimeStamp);
+
+                // Add rows to the DataGridView for each ticket event
+                foreach (TicketEvent ticketEvent in sortedTicketEvents)
+                {
+                    ticketEventsGrid.Rows.Add(ticketEvent.Type, ticketEvent.TimeStamp.ToShortDateString(), ticketEvent.TimeStamp.ToShortTimeString());
+                }
             }
 
             else
@@ -238,7 +274,8 @@ namespace GarageControlCenterUI
         {
             ticketNumberTextBox.Text = ticket.Id.ToString();
             validFromTextBox.Text = ticket.ValidFrom.ToString("dd.MM.yy.");
-            validUntilTextBox.Text = ticket.ValidUntil.ToString("dd.MM.yy.");
+            validUntilTextBox.Value = ticket.ValidUntil;
+            TicketStateLabel.Text = ticket.State.ToString();
             ticketTypeComboBox.SelectedIndex = ticket.Type switch
             {
                 TicketType.WholeDay => 0,
@@ -270,13 +307,14 @@ namespace GarageControlCenterUI
         {
             if (usersListBox.SelectedItem != null)
             {
-                var from = DateOnly.FromDateTime(DateTime.Now);
+                var from = DateTime.Now;
                 var until = from.AddMonths(1).AddDays(-1);
 
                 validFromTextBox.Text = from.ToString("dd.MM.yy");
-                validUntilTextBox.Text = until.ToString("dd.MM.yy");
+                validUntilTextBox.Value = until;
                 ticketTypeComboBox.SelectedIndex = 0;
                 newTicketFlag = true;
+                TicketStateLabel.Text = "";
 
                 ShowTicketControls();
             }
@@ -286,17 +324,17 @@ namespace GarageControlCenterUI
         {
             if (usersListBox.SelectedItem is GarageUser selectedUser)
             {
-                users.Remove(selectedUser);
                 ClearUserControls();
                 ClearTicketControls();
                 await userService.DeleteUserAsync(selectedUser.Id); // Delete user from the database
+                myGarage.Users.Remove(selectedUser);
                 SortUsersAlphabetically();
             }
         }
 
         private void SortUsersAlphabetically()
         {
-            users.Sort((x, y) => string.Compare(x.LastName, y.LastName));
+            myGarage.Users.Sort((x, y) => string.Compare(x.LastName, y.LastName));
             bindingUserList.ResetBindings();
         }
     }
