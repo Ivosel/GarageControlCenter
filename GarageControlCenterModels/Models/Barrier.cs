@@ -2,7 +2,7 @@
 {
     public class Barrier
     {
-        public bool IsOpen = false;
+        public bool IsOpen { get; private set; } = false;
 
         public void OpenBarrier()
         {

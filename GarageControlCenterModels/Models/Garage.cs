@@ -17,13 +17,12 @@ namespace GarageControlCenterBackend.Models
 
         public Garage(List<int> spotsPerLevelList, string name)
         {
-            // spotsPerLevellist recieved from a GUI form
             Name = name;
             Tickets = new List<Ticket>();
             Users = new List<GarageUser>();
             Levels = new List<Level>();
 
-            // Create levels and parking spots on each level according to the list recieved
+            // Create levels and parking spots on each level according to the list received
             for (int i = 0; i < spotsPerLevelList.Count; i++)
             {
                 var level = new Level(i + 1, spotsPerLevelList[i]);
@@ -38,10 +37,7 @@ namespace GarageControlCenterBackend.Models
             }
 
             // Calculate garage's total capacity by adding all levels' capacity
-            foreach (Level level in Levels)
-            {
-                TotalCapacity += level.Capacity;
-            }
+            TotalCapacity = Levels.Sum(level => level.Capacity);
         }
 
         public override string ToString()
@@ -49,26 +45,26 @@ namespace GarageControlCenterBackend.Models
             return Name;
         }
 
-        // Return a number of total spots occupied
+        // Return the total number of occupied spots
         public int TotalOccupiedSpots()
         {
-            int totalOccupiedSpots = 0;
-            foreach (Level level in Levels)
-            {
-                totalOccupiedSpots += level.OccupiedSpots();
-            }
-            return totalOccupiedSpots;
+            return Levels.Sum(level => level.OccupiedSpots());
         }
 
-        // Return a number of total free spots
+        // Return the total number of free spots
         public int TotalFreeSpots()
         {
-            int totalFreeSpots = 0;
-            foreach (Level level in Levels)
-            {
-                totalFreeSpots += level.FreeSpots();
-            }
-            return totalFreeSpots;
+            return Levels.Sum(level => level.FreeSpots());
+        }
+
+        public Ticket GetTicket(int ticketNumber)
+        {
+            return Tickets.FirstOrDefault(t => t.Id == ticketNumber);
+        }
+
+        public GarageUser GetUser(int userId)
+        {
+            return Users.FirstOrDefault(u => u.Id == userId);
         }
     }
 }

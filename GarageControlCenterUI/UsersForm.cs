@@ -83,7 +83,8 @@ namespace GarageControlCenterUI
         {
             try
             {
-                var existingUser = myGarage.Users.FirstOrDefault(u => u.Id.ToString() == userIdTextBox.Text);
+                int.TryParse(userIdTextBox.Text, out int userId);
+                var existingUser = myGarage.GetUser(userId);
 
                 if (existingUser != null)
                 {

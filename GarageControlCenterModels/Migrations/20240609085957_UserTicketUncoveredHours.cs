@@ -4,7 +4,7 @@
 
 namespace GarageControlCenterBackend.Migrations
 {
-    public partial class UpdateUserModel : Migration
+    public partial class UserTicketUncoveredHours : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

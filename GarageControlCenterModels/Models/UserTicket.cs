@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
 
 namespace GarageControlCenterBackend.Models
 {
@@ -18,7 +17,7 @@ namespace GarageControlCenterBackend.Models
         public TicketType Type { get; private set; }
         public bool isBlocked { get; private set; }
         public List<TicketEvent> TicketEvents { get; private set; }
-
+        private int UncoveredHours;
 
         private UserTicket() { }
 
@@ -30,6 +29,7 @@ namespace GarageControlCenterBackend.Models
             isBlocked = false;
             State = TicketState.Neutral;
             TicketEvents = new List<TicketEvent>();
+            UncoveredHours = -1;
         }
 
         public void ExtendTicket(DateTime extendUntil)
@@ -71,6 +71,7 @@ namespace GarageControlCenterBackend.Models
         {
             State = TicketState.Inside;
             TicketEvents.Add(new TicketEvent(DateTime.Now, TicketEventType.Entrance));
+            UncoveredHours = -1;
         }
 
         public void SetOutside()
@@ -81,7 +82,54 @@ namespace GarageControlCenterBackend.Models
 
         public bool IsValid()
         {
-            return ValidUntil.Date >= DateTime.Now.Date;
+            return ValidUntil.Date >= DateTime.Today;
+        }
+
+        public int GetUncoveredHours()
+        {
+            return UncoveredHours;
+        }
+
+        public void ResetUncoveredHours()
+        {
+            UncoveredHours = 0;
+        }
+
+        public void CalculateUncoveredHours()
+        {
+            var lastEntranceEvent = TicketEvents
+                .LastOrDefault(e => e.Type == TicketEventType.Entrance);
+
+            if (lastEntranceEvent == null)
+            {
+                throw new ArgumentException("No entrance event found!");
+            }
+
+            var startTime = lastEntranceEvent.TimeStamp;
+            var endTime = DateTime.Now;
+
+            for (var time = startTime; time < endTime; time = time.AddHours(1))
+            {
+                switch (Type)
+                {
+                    case TicketType.DayShift:
+                        if (time.Hour < 6 || time.Hour >= 18)
+                        {
+                            UncoveredHours++;
+                        }
+                        break;
+
+                    case TicketType.NightShift:
+                        if (time.Hour >= 6 && time.Hour < 18)
+                        {
+                            UncoveredHours++;
+                        }
+                        break;
+                    default:
+                        UncoveredHours = 0;
+                        break;
+                }
+            }
         }
     }
 
@@ -99,3 +147,4 @@ namespace GarageControlCenterBackend.Models
         NightShift
     }
 }
+

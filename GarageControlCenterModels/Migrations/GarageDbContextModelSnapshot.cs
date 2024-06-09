@@ -22,17 +22,13 @@ namespace GarageControlCenterBackend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("GarageControlCenterModels.Models.Garage", b =>
+            modelBuilder.Entity("GarageControlCenterBackend.Models.Garage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -46,84 +42,7 @@ namespace GarageControlCenterBackend.Migrations
                     b.ToTable("Garages");
                 });
 
-            modelBuilder.Entity("GarageControlCenterModels.Models.Level", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GarageId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LevelNumber")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GarageId");
-
-                    b.ToTable("Levels");
-                });
-
-            modelBuilder.Entity("GarageControlCenterModels.Models.ParkingSpot", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<bool>("IsOccupied")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LevelId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Placement")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LevelId");
-
-                    b.ToTable("ParkingSpots");
-                });
-
-            modelBuilder.Entity("GarageControlCenterModels.Models.Ticket", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("EntranceTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GarageId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("TicketNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GarageId");
-
-                    b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("GarageControlCenterModels.Models.User", b =>
+            modelBuilder.Entity("GarageControlCenterBackend.Models.GarageUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -161,7 +80,7 @@ namespace GarageControlCenterBackend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("GarageControlCenterModels.Models.UserTicket", b =>
+            modelBuilder.Entity("GarageControlCenterBackend.Models.Level", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,9 +88,106 @@ namespace GarageControlCenterBackend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Number")
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GarageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LevelNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GarageId");
+
+                    b.ToTable("Levels");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.ParkingSpot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("IsOccupied")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LevelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Placement")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LevelId");
+
+                    b.ToTable("ParkingSpots");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.Ticket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("EntranceTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GarageId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RegistrationPlate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GarageId");
+
+                    b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.TicketEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserTicketId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserTicketId");
+
+                    b.ToTable("TicketEvents");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.UserTicket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("State")
                         .HasColumnType("int");
@@ -199,42 +215,9 @@ namespace GarageControlCenterBackend.Migrations
                     b.ToTable("UserTickets");
                 });
 
-            modelBuilder.Entity("GarageControlCenterModels.Models.Level", b =>
+            modelBuilder.Entity("GarageControlCenterBackend.Models.GarageUser", b =>
                 {
-                    b.HasOne("GarageControlCenterModels.Models.Garage", "GarageRef")
-                        .WithMany("Levels")
-                        .HasForeignKey("GarageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GarageRef");
-                });
-
-            modelBuilder.Entity("GarageControlCenterModels.Models.ParkingSpot", b =>
-                {
-                    b.HasOne("GarageControlCenterModels.Models.Level", "LevelRef")
-                        .WithMany("Spots")
-                        .HasForeignKey("LevelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LevelRef");
-                });
-
-            modelBuilder.Entity("GarageControlCenterModels.Models.Ticket", b =>
-                {
-                    b.HasOne("GarageControlCenterModels.Models.Garage", "GarageRef")
-                        .WithMany("Tickets")
-                        .HasForeignKey("GarageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GarageRef");
-                });
-
-            modelBuilder.Entity("GarageControlCenterModels.Models.User", b =>
-                {
-                    b.HasOne("GarageControlCenterModels.Models.Garage", "GarageRef")
+                    b.HasOne("GarageControlCenterBackend.Models.Garage", "GarageRef")
                         .WithMany("Users")
                         .HasForeignKey("GarageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -243,16 +226,62 @@ namespace GarageControlCenterBackend.Migrations
                     b.Navigation("GarageRef");
                 });
 
-            modelBuilder.Entity("GarageControlCenterModels.Models.UserTicket", b =>
+            modelBuilder.Entity("GarageControlCenterBackend.Models.Level", b =>
                 {
-                    b.HasOne("GarageControlCenterModels.Models.User", null)
-                        .WithOne("UserTicket")
-                        .HasForeignKey("GarageControlCenterModels.Models.UserTicket", "UserId")
+                    b.HasOne("GarageControlCenterBackend.Models.Garage", "GarageRef")
+                        .WithMany("Levels")
+                        .HasForeignKey("GarageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("GarageRef");
                 });
 
-            modelBuilder.Entity("GarageControlCenterModels.Models.Garage", b =>
+            modelBuilder.Entity("GarageControlCenterBackend.Models.ParkingSpot", b =>
+                {
+                    b.HasOne("GarageControlCenterBackend.Models.Level", "LevelRef")
+                        .WithMany("Spots")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LevelRef");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.Ticket", b =>
+                {
+                    b.HasOne("GarageControlCenterBackend.Models.Garage", "GarageRef")
+                        .WithMany("Tickets")
+                        .HasForeignKey("GarageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GarageRef");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.TicketEvent", b =>
+                {
+                    b.HasOne("GarageControlCenterBackend.Models.UserTicket", "UserTicketRef")
+                        .WithMany("TicketEvents")
+                        .HasForeignKey("UserTicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserTicketRef");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.UserTicket", b =>
+                {
+                    b.HasOne("GarageControlCenterBackend.Models.GarageUser", "UserRef")
+                        .WithOne("UserTicket")
+                        .HasForeignKey("GarageControlCenterBackend.Models.UserTicket", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserRef");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.Garage", b =>
                 {
                     b.Navigation("Levels");
 
@@ -261,15 +290,20 @@ namespace GarageControlCenterBackend.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("GarageControlCenterModels.Models.Level", b =>
+            modelBuilder.Entity("GarageControlCenterBackend.Models.GarageUser", b =>
+                {
+                    b.Navigation("UserTicket")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.Level", b =>
                 {
                     b.Navigation("Spots");
                 });
 
-            modelBuilder.Entity("GarageControlCenterModels.Models.User", b =>
+            modelBuilder.Entity("GarageControlCenterBackend.Models.UserTicket", b =>
                 {
-                    b.Navigation("UserTicket")
-                        .IsRequired();
+                    b.Navigation("TicketEvents");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,5 @@
-﻿using GarageControlCenterBackend.Models;
-using GarageControlCenterBackend.DBContexts;
+﻿using GarageControlCenterBackend.DBContexts;
+using GarageControlCenterBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +9,6 @@ namespace GarageControlCenterBackend.Services
     {
         private readonly GarageDbContext _context;
         private readonly ILogger<GarageService> _logger;
-
 
         public GarageService(GarageDbContext context, ILogger<GarageService> logger)
         {
@@ -21,16 +20,16 @@ namespace GarageControlCenterBackend.Services
         {
             try
             {
-                return await _context.Garages.Include(g => g.Levels)
-                                             .ThenInclude(l => l.Spots)
-                                             .Include(g => g.Tickets)
-                                             .Include(g => g.Users)
-                                             .ThenInclude(u => u.UserTicket)
-                                             .ThenInclude(ut=> ut.TicketEvents)
-                                             .AsSplitQuery()
-                                             .ToListAsync();
+                return await _context.Garages
+                    .Include(g => g.Levels)
+                        .ThenInclude(l => l.Spots)
+                    .Include(g => g.Tickets)
+                    .Include(g => g.Users)
+                        .ThenInclude(u => u.UserTicket)
+                            .ThenInclude(ut => ut.TicketEvents)
+                    .AsSplitQuery()
+                    .ToListAsync();
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while getting all garages.");
@@ -45,7 +44,6 @@ namespace GarageControlCenterBackend.Services
                 _context.Garages.Add(garage);
                 await _context.SaveChangesAsync();
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while adding a garage.");
@@ -63,13 +61,11 @@ namespace GarageControlCenterBackend.Services
                     existingTicket.MarkTicketPaid();
                     await _context.SaveChangesAsync();
                 }
-
                 else
                 {
                     _logger.LogWarning($"Ticket with id {updatedTicket.Id} not found.");
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while updating ticket with id: {updatedTicket.Id}.");
@@ -84,7 +80,6 @@ namespace GarageControlCenterBackend.Services
                 _context.Tickets.Add(ticket);
                 await _context.SaveChangesAsync();
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while adding a ticket.");
@@ -102,20 +97,17 @@ namespace GarageControlCenterBackend.Services
                     _context.Tickets.Remove(existingTicket);
                     await _context.SaveChangesAsync();
                 }
-
                 else
                 {
                     _logger.LogWarning($"Ticket with id {ticket.Id} not found.");
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while removing ticket with id: {ticket.Id}.");
                 throw;
             }
         }
-
 
         public async Task OccupyParkingSpotAsync(ParkingSpot updatedSpot)
         {
@@ -127,13 +119,11 @@ namespace GarageControlCenterBackend.Services
                     existingSpot.ReserveSpot();
                     await _context.SaveChangesAsync();
                 }
-
                 else
                 {
                     _logger.LogWarning($"Parking spot with id {updatedSpot.Id} not found.");
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while occupying parking spot with id: {updatedSpot.Id}.");
@@ -151,13 +141,11 @@ namespace GarageControlCenterBackend.Services
                     existingSpot.ReleaseSpot();
                     await _context.SaveChangesAsync();
                 }
-
                 else
                 {
                     _logger.LogWarning($"Parking spot with id {updatedSpot.Id} not found.");
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while releasing parking spot with id: {updatedSpot.Id}.");

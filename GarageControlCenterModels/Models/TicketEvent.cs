@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GarageControlCenterBackend.Models
+﻿namespace GarageControlCenterBackend.Models
 {
     public class TicketEvent
     {
@@ -29,3 +23,4 @@ namespace GarageControlCenterBackend.Models
         Exit
     }
 }
+

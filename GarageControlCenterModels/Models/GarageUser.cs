@@ -21,6 +21,7 @@ namespace GarageControlCenterBackend.Models
         public UserTicket UserTicket { get; private set; }
 
         private GarageUser() { }
+
         public GarageUser(string lastName, string firstName, string phoneNumber, string email, string registrationPlate, int garageId)
         {
             LastName = lastName;

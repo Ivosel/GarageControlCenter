@@ -20,7 +20,7 @@ namespace GarageControlCenterUI
         public ExitDemonstration(Garage garage, GarageService GarageService, UserService UserService)
         {
             InitializeComponent();
-            InsertTicketButton.Click += async (sender, e) => await InsertTicketButton_Click(sender, e); ;
+            InsertTicketButton.Click += async (sender, e) => await InsertTicketButton_Click(sender, e);
             service = GarageService;
             myGarage = garage;
             random = new Random();
@@ -51,19 +51,16 @@ namespace GarageControlCenterUI
                 {
                     await HandleTicketInserted(ticketNumber);
                 }
-
-                else if (isUserIdEntered)
+                else
                 {
                     await HandleUserIdEntered(userId);
                 }
-
             }
             catch (Exception ex)
             {
                 // Handle exceptions
                 MessageBox.Show($"An error occurred: {ex.Message}");
             }
-
             finally
             {
                 ticketNumberTextBox.Text = "Ticket number";
@@ -73,7 +70,7 @@ namespace GarageControlCenterUI
 
                 if (Exit.IsOpen)
                 {
-                Exit.CloseBarrier();
+                    Exit.CloseBarrier();
                 }
             }
         }
@@ -82,14 +79,21 @@ namespace GarageControlCenterUI
         {
             var availableLevels = myGarage.Levels.Where(level => level.OccupiedSpots() > 0).ToList();
 
-            // Randomly select a level from the used levels
+            if (availableLevels.Count == 0)
+            {
+                return;
+            }
+
             int randomLevelIndex = random.Next(availableLevels.Count);
             var chosenLevel = availableLevels[randomLevelIndex];
 
-            // Filter spots that are occupied in the chosen level
             var usedSpots = chosenLevel.Spots.Where(spot => spot.IsOccupied).ToList();
 
-            // Select a random spot from the occupied spots
+            if (usedSpots.Count == 0)
+            {
+                return;
+            }
+
             int randomSpotIndex = random.Next(usedSpots.Count);
             var chosenSpot = usedSpots[randomSpotIndex];
             chosenSpot.ReleaseSpot();
@@ -98,58 +102,94 @@ namespace GarageControlCenterUI
 
         public async Task HandleTicketInserted(int ticketNumber)
         {
-            // Search for a ticket with the entered ticket number
-            var ticket = myGarage.Tickets.FirstOrDefault(t => t.Id == ticketNumber);
-
-            if (ticket != null)
+            try
             {
-                // Ticket found, check if it's paid
-                Exit.ReadTicket(ticket);
+                var ticket = myGarage.GetTicket(ticketNumber);
 
-                if (Exit.IsOpen)
+                if (ticket != null)
                 {
-                    myGarage.Tickets.Remove(ticket);
-                    await service.RemoveTicketAsync(ticket);
-                    await UpdateParkingSpot();
-                    MessageBox.Show("Thank you for using our garage!", "Barrier Open", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Exit.ReadTicket(ticket);
+
+                    if (Exit.IsOpen)
+                    {
+                        myGarage.Tickets.Remove(ticket);
+                        await service.RemoveTicketAsync(ticket);
+                        await UpdateParkingSpot();
+                        MessageBox.Show("Thank you for using our garage!", "Barrier Open", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ticket not paid. Please pay the ticket on the automatic payment machine!", "Barrier Closed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Ticket not paid. Please pay the ticket on the automatic payment machine!", "Barrier Closed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Ticket not found. Please enter a valid ticket number.", "Invalid Ticket", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Ticket not found. Please enter a valid ticket number.", "Invalid Ticket", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Handle exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                Exit.CloseBarrier();
             }
         }
 
         public async Task HandleUserIdEntered(int userId)
         {
-            var user = myGarage.Users.FirstOrDefault(u => u.Id == userId);
-
-            if (user != null)
+            try
             {
-                if (user.UserTicket == null)
-                {
-                    MessageBox.Show("User does not have a ticket.");
-                    return;
-                }
+                var user = myGarage.GetUser(userId);
 
-                if (!user.UserTicket.IsValid())
+                if (user != null)
                 {
-                    MessageBox.Show("Ticket expired!");
-                    return;
-                }
+                    if (user.UserTicket == null)
+                    {
+                        MessageBox.Show("User does not have a ticket.");
+                        return;
+                    }
 
-                if (user.UserTicket.State == TicketState.Outside)
-                {
-                    MessageBox.Show("User is not inside the garage.");
-                    return;
+                    if (!user.UserTicket.IsValid())
+                    {
+                        MessageBox.Show("Ticket expired!");
+                        return;
+                    }
+
+                    if (user.UserTicket.State == TicketState.Outside)
+                    {
+                        MessageBox.Show("User is not inside the garage.");
+                        return;
+                    }
+
+                    Exit.ReadUserTicket(user.UserTicket);
+
+                    if (Exit.IsOpen)
+                    {
+                        user.UserTicket.SetOutside();
+                        await userService.UpdateUserAsync(user);
+                        await UpdateParkingSpot();
+                        MessageBox.Show("Thank you for using our garage!", "Barrier Open", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ticket not paid. Please pay the ticket on the automatic payment machine!", "Barrier Closed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
-                await UpdateParkingSpot();
-                user.UserTicket.SetOutside();
-                await userService.UpdateUserAsync(user);
+                else
+                {
+                    MessageBox.Show("User not found. Please enter a valid user ID.", "Invalid User", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
                 Exit.CloseBarrier();
             }
         }

@@ -2,11 +2,9 @@
 {
     public class EntranceBarrier : Barrier
     {
-        Ticket Ticket;
         public Ticket IssueTicket(string registrationPlate)
         {
-            Ticket = new Ticket(registrationPlate);
-            return Ticket;
+            return new Ticket(registrationPlate);
         }
     }
 }

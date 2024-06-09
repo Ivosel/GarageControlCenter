@@ -51,7 +51,7 @@ namespace GarageControlCenterBackend.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GarageId = table.Column<int>(type: "int", nullable: false),
-                    TicketNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RegistrationPlate = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EntranceTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -135,6 +135,27 @@ namespace GarageControlCenterBackend.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TicketEvents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserTicketId = table.Column<int>(type: "int", nullable: false),
+                    TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketEvents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TicketEvents_UserTickets_UserTicketId",
+                        column: x => x.UserTicketId,
+                        principalTable: "UserTickets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Levels_GarageId",
                 table: "Levels",
@@ -144,6 +165,11 @@ namespace GarageControlCenterBackend.Migrations
                 name: "IX_ParkingSpots_LevelId",
                 table: "ParkingSpots",
                 column: "LevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketEvents_UserTicketId",
+                table: "TicketEvents",
+                column: "UserTicketId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_GarageId",
@@ -168,13 +194,16 @@ namespace GarageControlCenterBackend.Migrations
                 name: "ParkingSpots");
 
             migrationBuilder.DropTable(
+                name: "TicketEvents");
+
+            migrationBuilder.DropTable(
                 name: "Tickets");
 
             migrationBuilder.DropTable(
-                name: "UserTickets");
+                name: "Levels");
 
             migrationBuilder.DropTable(
-                name: "Levels");
+                name: "UserTickets");
 
             migrationBuilder.DropTable(
                 name: "Users");

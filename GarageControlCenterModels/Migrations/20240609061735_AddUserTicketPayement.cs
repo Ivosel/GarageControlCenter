@@ -4,22 +4,23 @@
 
 namespace GarageControlCenterBackend.Migrations
 {
-    public partial class FinalTry : Migration
+    public partial class AddUserTicketPayement : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "TicketId",
-                table: "Users");
+                name: "isPaid",
+                table: "UserTickets");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "TicketId",
-                table: "Users",
-                type: "int",
-                nullable: true);
+            migrationBuilder.AddColumn<bool>(
+                name: "isPaid",
+                table: "UserTickets",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
         }
     }
 }

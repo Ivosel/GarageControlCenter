@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace GarageControlCenterBackend.Models
+﻿namespace GarageControlCenterBackend.Models
 {
     public class Level
     {

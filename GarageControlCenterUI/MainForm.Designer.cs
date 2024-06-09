@@ -129,6 +129,7 @@
             Controls.Add(mainFormLayout);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
+            MaximizeBox = false;
             Name = "MainForm";
             Text = "Garage Control Center";
             WindowState = FormWindowState.Maximized;

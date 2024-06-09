@@ -448,6 +448,7 @@
             Controls.Add(lastNameTextBox);
             Controls.Add(firstNameTextBox);
             Controls.Add(usersListBox);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "UsersForm";
             Text = "Users";
             TopMost = true;

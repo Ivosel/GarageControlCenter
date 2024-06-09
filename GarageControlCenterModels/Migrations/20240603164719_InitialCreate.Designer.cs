@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GarageControlCenterBackend.Migrations
 {
     [DbContext(typeof(GarageDbContext))]
-    [Migration("20240529002944_FinalTry")]
-    partial class FinalTry
+    [Migration("20240603164719_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -148,7 +148,7 @@ namespace GarageControlCenterBackend.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<string>("TicketNumber")
+                    b.Property<string>("RegistrationPlate")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -157,6 +157,30 @@ namespace GarageControlCenterBackend.Migrations
                     b.HasIndex("GarageId");
 
                     b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.TicketEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserTicketId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserTicketId");
+
+                    b.ToTable("TicketEvents");
                 });
 
             modelBuilder.Entity("GarageControlCenterBackend.Models.UserTicket", b =>
@@ -237,6 +261,15 @@ namespace GarageControlCenterBackend.Migrations
                     b.Navigation("GarageRef");
                 });
 
+            modelBuilder.Entity("GarageControlCenterBackend.Models.TicketEvent", b =>
+                {
+                    b.HasOne("GarageControlCenterBackend.Models.UserTicket", null)
+                        .WithMany("TicketEvents")
+                        .HasForeignKey("UserTicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("GarageControlCenterBackend.Models.UserTicket", b =>
                 {
                     b.HasOne("GarageControlCenterBackend.Models.GarageUser", "UserRef")
@@ -266,6 +299,11 @@ namespace GarageControlCenterBackend.Migrations
             modelBuilder.Entity("GarageControlCenterBackend.Models.Level", b =>
                 {
                     b.Navigation("Spots");
+                });
+
+            modelBuilder.Entity("GarageControlCenterBackend.Models.UserTicket", b =>
+                {
+                    b.Navigation("TicketEvents");
                 });
 #pragma warning restore 612, 618
         }

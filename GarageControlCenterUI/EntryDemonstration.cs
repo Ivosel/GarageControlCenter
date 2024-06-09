@@ -102,7 +102,7 @@ namespace GarageControlCenterUI
                 int userId = int.Parse(UserIdTextBox.Text);
 
                 // Find the user with this ID in the myGarage.Users list
-                var user = myGarage.Users.FirstOrDefault(u => u.Id == userId);
+                var user = myGarage.GetUser(userId);
 
                 if (user != null)
                 {

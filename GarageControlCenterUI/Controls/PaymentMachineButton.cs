@@ -6,20 +6,21 @@ namespace GarageControlCenterUI.Controls
     public partial class PaymentMachineButton : Button
     {
         PaymentMachine Machine;
-        MainForm MainForm;
         TextBox ticketNumberTextBox;
+        TextBox userIdTextBox;
+        TicketsForm ticketsForm;
 
-        public PaymentMachineButton(MainForm mainForm)
+        public PaymentMachineButton(PaymentMachine machine, TicketsForm form)
         {
-            Machine = new PaymentMachine();
-            MainForm = mainForm;
             InitializeButton();
+            Machine = machine;
+            ticketsForm = form;
         }
 
         private void InitializeButton()
         {
             BackColor = Color.White;
-            Size = new Size(200, 180);
+            Size = new Size(200, 240);
             Margin = new Padding(20, 3, 3, 3);
 
             // Create a panel to contain the button elements
@@ -55,19 +56,27 @@ namespace GarageControlCenterUI.Controls
 
             // Create a label for entering ticket number
             Label enterTicketNumberLabel = CreateLabel($"Enter ticket number:", FontStyle.Bold, ContentAlignment.MiddleCenter, 12);
-            nameLabel.Dock = DockStyle.Top;
             enterTicketNumberLabel.Anchor = AnchorStyles.Top;
             enterTicketNumberLabel.Width = (int)(tableLayoutPanel.Width * 0.5);
+            enterTicketNumberLabel.Margin = new Padding(0, 10, 0, 0);
+
+            Label enterUserIdLabel = CreateLabel($"or user ID:", FontStyle.Bold, ContentAlignment.MiddleCenter, 12);
+            enterUserIdLabel.Anchor = AnchorStyles.Top;
+            enterUserIdLabel.Width = (int)(tableLayoutPanel.Width * 0.5);
 
             // Create a button for inserting a ticket
             Button insertTicketButton = CreateButton("Insert Ticket");
             insertTicketButton.Anchor = AnchorStyles.Top;
             insertTicketButton.Width = (int)(tableLayoutPanel.Width * 0.5);
-            insertTicketButton.Click += InsertTicketButton_Click;
+            insertTicketButton.Click += async (sender, e) => await InsertTicketButton_Click(sender, e); ;
 
-            // Create a TextBox for entering ticket number
+            // Create TextBoxes for entering ticket numbers and user IDs
             ticketNumberTextBox = new TextBox();
             ticketNumberTextBox.Anchor = AnchorStyles.Top;
+            ticketNumberTextBox.TextAlign = HorizontalAlignment.Center;
+            userIdTextBox = new TextBox();
+            userIdTextBox.Anchor = AnchorStyles.Top;
+            userIdTextBox.TextAlign = HorizontalAlignment.Center;
 
             // Add controls to the TableLayoutPanel
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -75,7 +84,9 @@ namespace GarageControlCenterUI.Controls
             tableLayoutPanel.Controls.Add(nameLabel, 0, 1);
             tableLayoutPanel.Controls.Add(enterTicketNumberLabel, 0, 2);
             tableLayoutPanel.Controls.Add(ticketNumberTextBox, 0, 3);
-            tableLayoutPanel.Controls.Add(insertTicketButton, 0, 4);
+            tableLayoutPanel.Controls.Add(enterUserIdLabel, 0, 4);
+            tableLayoutPanel.Controls.Add(userIdTextBox, 0, 5);
+            tableLayoutPanel.Controls.Add(insertTicketButton, 0, 6);
 
             // Add TableLayoutPanel to the panel
             panel.Controls.Add(tableLayoutPanel);
@@ -83,76 +94,47 @@ namespace GarageControlCenterUI.Controls
         }
 
         // Event handler for the insert ticket button click event
-        private void InsertTicketButton_Click(object sender, EventArgs e)
+        private async Task InsertTicketButton_Click(object sender, EventArgs e)
         {
-            int ticketNumber;
-
-            if (int.TryParse(ticketNumberTextBox.Text, out int ticketId))
+            try
             {
-                ticketNumber = ticketId;
-            }
+                bool isTicketNumberEntered = int.TryParse(ticketNumberTextBox.Text, out int ticketNumber);
+                bool isUserIdEntered = int.TryParse(userIdTextBox.Text, out int userId);
 
-            else
-            {
-                // Display a warning message if the input is invalid
-                MessageBox.Show("Please enter a valid ticket number.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            Ticket ticket = MainForm.myGarage.Tickets.FirstOrDefault(t => t.Id == ticketNumber);
-
-            // Check if the ticket exists
-            if (ticket != null)
-            {
-                // Handle unpaid ticket
-                if (!ticket.IsPaid)
+                if (isTicketNumberEntered && isUserIdEntered)
                 {
-                    HandleUnpaidTicket(ticket);
+                    MessageBox.Show("Please enter either a ticket number or a user ID, not both.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
+
+                if (!isTicketNumberEntered && !isUserIdEntered)
+                {
+                    MessageBox.Show("Please enter a valid ticket number or a user ID.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (isTicketNumberEntered)
+                {
+                    await Machine.CheckTicket(ticketNumber);
+                }
+
                 else
                 {
-                    ShowMessage("Ticket already paid!", "Ticket Already Paid", MessageBoxIcon.Information);
+                    await Machine.CheckUserTicket(userId);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                ShowMessage("Ticket number not valid!", "Ticket Not Valid", MessageBoxIcon.Information);
+                // Handle exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}");
             }
 
-            // Clear the ticket number TextBox
-            ticketNumberTextBox.Clear();
-        }
-
-        // Handle an unpaid ticket
-        private async void HandleUnpaidTicket(Ticket ticket)
-        {
-            decimal price = Machine.CalculateTotalPrice(ticket);
-
-            // If the price is 0, the ticket is within the grace period
-            if (price == 0)
+            finally
             {
-                // Mark the ticket as paid and refresh tickets
-                ShowMessage("You are within our grace period, you may exit free of charge!", "Grace Period", MessageBoxIcon.Information);
-                ticket.MarkTicketPaid();
-                await MainForm.garageService.UpdateTicketAsync(ticket);
-                MainForm.ticketsForm.RefreshTickets();
-                return;
-            }
-
-            // Show confirmation dialog for payment
-            DialogResult result = ShowConfirmation($"Please pay {price.ToString("0.00")}€", "Confirmation");
-
-            // Process payment based on user response
-            if (result == DialogResult.Yes)
-            {
-                ticket.MarkTicketPaid();
-                await MainForm.garageService.UpdateTicketAsync(ticket);
-                MainForm.ticketsForm.RefreshTickets();
-                ShowMessage("Payment accepted, please remove your ticket!", "Payment Accepted", MessageBoxIcon.Information);
-            }
-            else
-            {
-                ShowMessage("Operation canceled!", "Operation Canceled", MessageBoxIcon.Information);
+                // Clear the ticket number TextBox and refresh the tickets form
+                ticketNumberTextBox.Clear();
+                userIdTextBox.Clear();
+                ticketsForm.RefreshTickets();
             }
         }
 
@@ -177,18 +159,6 @@ namespace GarageControlCenterUI.Controls
                 Text = text,
             };
             return button;
-        }
-
-        // Show a confirmation dialog
-        private DialogResult ShowConfirmation(string message, string caption)
-        {
-            return MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-        }
-
-        // Show a message dialog
-        private void ShowMessage(string message, string caption, MessageBoxIcon icon)
-        {
-            MessageBox.Show(message, caption, MessageBoxButtons.OK, icon);
         }
     }
 }

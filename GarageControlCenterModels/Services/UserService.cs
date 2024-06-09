@@ -2,7 +2,6 @@
 using GarageControlCenterBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic.ApplicationServices;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
@@ -26,7 +25,6 @@ namespace GarageControlCenterBackend.Services
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while adding a user.");
@@ -61,13 +59,11 @@ namespace GarageControlCenterBackend.Services
                     await _context.SaveChangesAsync();
                     _logger.LogInformation($"User {existingUser.Id} updated successfully with ticket {existingUser.UserTicket?.Id}");
                 }
-
                 else
                 {
                     _logger.LogWarning($"User with id {updatedUser.Id} not found.");
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while updating user with id: {updatedUser.Id}.");
@@ -86,13 +82,11 @@ namespace GarageControlCenterBackend.Services
                     _context.Users.Remove(user);
                     await _context.SaveChangesAsync();
                 }
-
                 else
                 {
                     _logger.LogWarning($"User with id {id} not found.");
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error occurred while deleting user with id: {id}.");
@@ -109,12 +103,10 @@ namespace GarageControlCenterBackend.Services
             {
                 existingTicket.BlockTicket();
             }
-
             else
             {
                 existingTicket.UnblockTicket();
             }
-
             if (updatedTicket.GetNeutralInfo())
             {
                 existingTicket.SetToNeutral();

@@ -6,8 +6,9 @@ namespace GarageControlCenterUI
     public partial class GarageListDialog : Form
     {
         private List<Garage> Garages;
-        GarageService garageService;
+        private GarageService garageService;
         public Garage SelectedGarage { get; private set; }
+
         public GarageListDialog(GarageService service)
         {
             garageService = service;
@@ -19,10 +20,7 @@ namespace GarageControlCenterUI
         private async Task PopulateGarageList()
         {
             Garages = await garageService.GetAllGaragesAsync();
-            foreach (var garage in Garages)
-            {
-                GaragesListBox.Items.Add(garage);
-            }
+            GaragesListBox.DataSource = Garages;
             SelectGarageButton.Enabled = true;
             Refresh();
         }

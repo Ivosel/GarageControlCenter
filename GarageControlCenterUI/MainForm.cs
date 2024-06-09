@@ -9,10 +9,11 @@ namespace GarageControlCenterUI
     [DesignerCategory("Form")]
     public partial class MainForm : Form
     {
-        public readonly GarageService garageService;
+        private readonly GarageService garageService;
         private readonly UserService userService;
         public Garage myGarage;
         public TicketsForm ticketsForm;
+        public PaymentMachine paymentMachine;
         private UsersForm usersForm;
         private EntryDemonstration entryDemo;
         private ExitDemonstration exitDemo;
@@ -24,6 +25,7 @@ namespace GarageControlCenterUI
         {
             this.garageService = garageService;
             this.userService = userService;
+            
             InitializeComponent();
             StartApp();
         }
@@ -34,6 +36,7 @@ namespace GarageControlCenterUI
             {
                 if (TryCreateOrSelectGarage())
                 {
+                    paymentMachine = new PaymentMachine(myGarage, userService, garageService);
                     break;
                 }
             }
@@ -110,14 +113,14 @@ namespace GarageControlCenterUI
 
             // Create overview buttons and add them to the list of button controls
             TotalButton totalButton = new TotalButton(myGarage);
-            BarrierButton entrance = new BarrierButton("entrance");
-            BarrierButton exit = new BarrierButton("exit");
-            PaymentMachineButton paymentMachine = new PaymentMachineButton(this);
+            BarrierButton entranceButton = new BarrierButton("entrance");
+            BarrierButton exitButton = new BarrierButton("exit");
+            PaymentMachineButton paymentMachineButton = new PaymentMachineButton(paymentMachine, ticketsForm);
 
             overviewControls.Add(totalButton);
-            overviewControls.Add(entrance);
-            overviewControls.Add(exit);
-            overviewControls.Add(paymentMachine);
+            overviewControls.Add(entranceButton);
+            overviewControls.Add(exitButton);
+            overviewControls.Add(paymentMachineButton);
 
             InitializeOverviewButton();
             InitializeLevelButtons();
