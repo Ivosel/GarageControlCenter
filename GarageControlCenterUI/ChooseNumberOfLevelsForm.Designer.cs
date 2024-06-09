@@ -95,7 +95,7 @@
             MinimizeBox = false;
             Name = "ChooseNumberOfLevelsForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "ChooseNumberOfLevelsForm";
+            Text = "Garage Name & Number of Levels";
             ResumeLayout(false);
             PerformLayout();
         }

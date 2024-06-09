@@ -15,7 +15,7 @@ namespace GarageControlCenterBackend.Models
         public TicketState State { get; private set; }
         [Required]
         public TicketType Type { get; private set; }
-        public bool isBlocked { get; private set; }
+        public bool IsBlocked { get; private set; }
         public List<TicketEvent> TicketEvents { get; private set; }
         private int UncoveredHours;
 
@@ -26,7 +26,7 @@ namespace GarageControlCenterBackend.Models
             ValidFrom = from;
             ValidUntil = until;
             Type = type;
-            isBlocked = false;
+            IsBlocked = false;
             State = TicketState.Neutral;
             TicketEvents = new List<TicketEvent>();
             UncoveredHours = -1;
@@ -44,12 +44,12 @@ namespace GarageControlCenterBackend.Models
 
         public void BlockTicket()
         {
-            isBlocked = true;
+            IsBlocked = true;
         }
 
         public void UnblockTicket()
         {
-            isBlocked = false;
+            IsBlocked = false;
         }
 
         public void SetToNeutral()
@@ -59,7 +59,7 @@ namespace GarageControlCenterBackend.Models
 
         public bool GetBlockedInfo()
         {
-            return isBlocked;
+            return IsBlocked;
         }
 
         public bool GetNeutralInfo()

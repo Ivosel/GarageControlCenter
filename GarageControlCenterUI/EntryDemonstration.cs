@@ -33,7 +33,7 @@ namespace GarageControlCenterUI
         {
             try
             {
-                // Find levels with available spots
+                // Find levels with available parking spots
                 var availableLevels = myGarage.Levels.Where(level => level.FreeSpots() > 0).ToList();
 
                 if (availableLevels.Count > 0)
@@ -54,7 +54,6 @@ namespace GarageControlCenterUI
                 }
                 else
                 {
-                    // Handle case where all levels are full
                     MessageBox.Show("No available spots in the garage.");
                 }
             }

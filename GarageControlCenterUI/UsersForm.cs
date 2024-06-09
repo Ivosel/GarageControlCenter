@@ -284,7 +284,7 @@ namespace GarageControlCenterUI
                 TicketType.NightShift => 2,
                 _ => -1,
             };
-            blockCheckBox.Checked = ticket.isBlocked;
+            blockCheckBox.Checked = ticket.IsBlocked;
 
             ShowTicketControls();
         }

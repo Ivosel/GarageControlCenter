@@ -206,7 +206,7 @@ namespace GarageControlCenterBackend.Migrations
                     b.Property<DateTime>("ValidUntil")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("isBlocked")
+                    b.Property<bool>("IsBlocked")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");

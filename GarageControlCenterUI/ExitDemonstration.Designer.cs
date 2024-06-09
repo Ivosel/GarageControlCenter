@@ -106,7 +106,7 @@ namespace GarageControlCenterUI
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "ExitDemonstration";
-            Text = "Demonstration";
+            Text = "Exit Demonstration";
             TopMost = true;
             FormClosing += ExitDemonstration_FormClosing;
             ResumeLayout(false);

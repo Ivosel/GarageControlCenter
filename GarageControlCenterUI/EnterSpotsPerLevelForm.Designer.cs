@@ -71,7 +71,7 @@
             MinimizeBox = false;
             Name = "EnterSpotsPerLevelForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "EnterSpotsPerLevelForm";
+            Text = "Parking Spots per Level";
             ResumeLayout(false);
             PerformLayout();
         }
